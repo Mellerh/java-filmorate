@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Film.
@@ -20,11 +21,10 @@ public class Film {
     String name;
 
     @Size(max = 200, message = "Длина не может превышать 200 символов")
-
-            
     String description;
 
-    LocalDateTime releaseDate;
+    @NotNull
+    LocalDate releaseDate;
 
     int duration;
 
