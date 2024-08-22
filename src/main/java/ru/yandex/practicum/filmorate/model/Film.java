@@ -1,18 +1,21 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import ru.yandex.practicum.filmorate.controller.Update;
 
 import java.time.LocalDate;
 
 
-@Getter
-@Setter
+@Data
 public class Film {
 
-    final LocalDate FILM_MIN_RELEASE_DATE = LocalDate.of(1895, 12, 18);
+    // делаем поле приватным, чтобы оно не попало в json-объект
+    // а также помечаем аннотацией, чтобы не создавался геттер для этого поля, чтобы также не попало в json
+    @Getter(AccessLevel.NONE)
+    private final LocalDate FILM_MIN_RELEASE_DATE = LocalDate.of(1895, 12, 18);
 
     // с помощью groups и маркерного интерфейса Update, мы проверяем наличие id только
     // на моменте PUT в контроллере
@@ -34,8 +37,16 @@ public class Film {
 
 
     @AssertTrue(message = "Дата релиза фильма должна быть после 18.12.1895")
-    public boolean isValidReleaseDate() {
+    private boolean isValidReleaseDate() {
         return releaseDate.isAfter(FILM_MIN_RELEASE_DATE);
     }
 
 }
+
+
+//{
+//        "name": "Гарфилд",
+//        "description": "Фильм про рыжего кота",
+//        "releaseDate": "2008-10-10",
+//        "duration": 88
+//        }

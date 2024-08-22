@@ -32,7 +32,7 @@ public class User {
      * аннотация метода валидации позволяет создать кастомную проверку
      */
     @AssertTrue(message = "Имя для отображения будет изменено на логин, если оно пустое")
-    public boolean isNameValid() {
+    private boolean isNameValid() {
         if (name == null || name.isEmpty()) {
             this.name = this.login;
         }
@@ -40,5 +40,11 @@ public class User {
         return true;
     }
 
-
 }
+
+
+//{
+//        "email": "vas@yande.ru",
+//        "login": "taras",
+//        "birthday": "1997-06-10"
+//        }
