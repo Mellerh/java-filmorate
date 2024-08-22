@@ -3,15 +3,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validation.Update;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Validated
 @Slf4j
@@ -19,54 +17,45 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
-    Long id = 0L;
-    Map<Long, User> userMap = new HashMap<>();
+
+    // мы создали сервис userService, который будет хранить пользователей и правильно их обновлять.
+    // это позволяет поддерживать принцип единой ответственности
+    UserService userService;
+
+    /**
+     * аннотация @Autowired автоматичски внедрит FilmService в контроллер
+     */
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
 
     @GetMapping
     public Collection<User> getAllUsers() {
-        return userMap.values();
+        return userService.getAllUsers();
     }
 
     @PostMapping
     public User createNewUser(@Valid @RequestBody User newUser) {
-        log.info("Создаём пользователя" + newUser.getLogin());
+        log.info("Add User: {} - Started", newUser);
 
-        newUser.setId(idGenerator());
-        userMap.put(newUser.getId(), newUser);
+        User createdUser = userService.createNewUser(newUser);
 
-        log.info("Пользователь" + newUser.getLogin() + " создан. Его id - " + newUser.getId());
-        return newUser;
+        log.info("Add User: {} - Finished", newUser);
+        return createdUser;
     }
 
     @PutMapping
     @Validated(Update.class)
     public User updateUser(@Valid @RequestBody User updatedUser) {
-        log.info("Обновляем пользователя " + updatedUser.getId());
+        log.info("Update User: {} - Started", updatedUser);
 
-        User userToUpdate = userMap.get(updatedUser.getId());
-        if (userToUpdate == null) {
-            log.warn("Пользователь с id " + updatedUser.getId() + " не найден.");
-            throw new NotFoundException("Пользователь с " + updatedUser.getId() + " не найден.");
-        }
+        User userToUpdate = userService.updateUser(updatedUser);
 
-        userToUpdate.setLogin(userToUpdate.getLogin());
-        userToUpdate.setName(userToUpdate.getLogin());
-        userToUpdate.setEmail(userToUpdate.getEmail());
-
-        if (userToUpdate.getBirthday() != null) {
-            userToUpdate.setBirthday(userToUpdate.getBirthday());
-        }
-
-        log.info("Пользователь " + updatedUser.getId() + "обновлён.");
-        return updatedUser;
+        log.info("Update User: {} - Finished", updatedUser);
+        return userToUpdate;
     }
 
-
-    /**
-     * метод для генерации id-пользователя
-     */
-    private Long idGenerator() {
-        return ++id;
-    }
 
 }

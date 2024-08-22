@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.validation.Update;
+import ru.yandex.practicum.filmorate.controller.Update;
 
 import java.time.LocalDate;
 
@@ -24,9 +24,13 @@ public class User {
     // не проверяем, потому что может быть пустым
     String name;
 
+    @NotNull
     @Past(message = "Дата рождения не может быть в будущем")
     LocalDate birthday;
 
+    /**
+     * аннотация метода валидации позволяет создать кастомную проверку
+     */
     @AssertTrue(message = "Имя для отображения будет изменено на логин, если оно пустое")
     public boolean isNameValid() {
         if (name == null || name.isEmpty()) {

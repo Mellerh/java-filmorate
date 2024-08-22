@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.yandex.practicum.filmorate.validation.Update;
+import ru.yandex.practicum.filmorate.controller.Update;
 
 import java.time.LocalDate;
 
@@ -30,7 +30,7 @@ public class Film {
     LocalDate releaseDate;
 
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
-    int duration;
+    Integer duration;
 
 
     @AssertTrue(message = "Дата релиза фильма должна быть после 18.12.1895")
