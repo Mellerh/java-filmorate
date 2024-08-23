@@ -39,12 +39,12 @@ public class UserService {
             throw new NotFoundException("Пользователь с " + updatedUser.getId() + " не найден.");
         }
 
-        userToUpdate.setLogin(userToUpdate.getLogin());
-        userToUpdate.setName(userToUpdate.getLogin());
-        userToUpdate.setEmail(userToUpdate.getEmail());
+        userToUpdate.setLogin(updatedUser.getLogin());
+        userToUpdate.setName(updatedUser.getLogin());
+        userToUpdate.setEmail(updatedUser.getEmail());
 
         if (userToUpdate.getBirthday() != null) {
-            userToUpdate.setBirthday(userToUpdate.getBirthday());
+            userToUpdate.setBirthday(updatedUser.getBirthday());
         }
 
         return userToUpdate;

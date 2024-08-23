@@ -19,7 +19,7 @@ public class Film {
 
     // с помощью groups и маркерного интерфейса Update, мы проверяем наличие id только
     // на моменте PUT в контроллере
-    @NotBlank(groups = {Update.class})
+    @NotNull(groups = {Update.class})
     @Positive(groups = {Update.class})
     Long id;
 

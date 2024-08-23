@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 public class User {
 
-    @NotBlank(groups = {Update.class})
+    @NotNull(groups = {Update.class})
     @Positive(groups = {Update.class})
     Long id;
 
