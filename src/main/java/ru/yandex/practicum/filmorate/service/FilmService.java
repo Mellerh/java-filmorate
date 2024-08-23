@@ -18,8 +18,8 @@ import java.util.Map;
 @Service
 public class FilmService {
 
-    Long id = 0L;
-    Map<Long, Film> filmMap = new HashMap<>();
+    private Long id = 0L;
+    private final Map<Long, Film> filmMap = new HashMap<>();
 
 
     public Collection<Film> getAllFilms() {

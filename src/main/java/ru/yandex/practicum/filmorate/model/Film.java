@@ -37,7 +37,7 @@ public class Film {
 
 
     @AssertTrue(message = "Дата релиза фильма должна быть после 18.12.1895")
-    private boolean isValidReleaseDate() {
+    public boolean isValidReleaseDate() {
         return releaseDate.isAfter(FILM_MIN_RELEASE_DATE);
     }
 
