@@ -15,7 +15,7 @@ public class Film {
     // делаем поле приватным, чтобы оно не попало в json-объект
     // а также помечаем аннотацией, чтобы не создавался геттер для этого поля, чтобы также не попало в json
     @Getter(AccessLevel.NONE)
-    private final LocalDate FILM_MIN_RELEASE_DATE = LocalDate.of(1895, 12, 18);
+    private final LocalDate filmMinReleaseDate = LocalDate.of(1895, 12, 18);
 
     // с помощью groups и маркерного интерфейса Update, мы проверяем наличие id только
     // на моменте PUT в контроллере
@@ -38,7 +38,7 @@ public class Film {
 
     @AssertTrue(message = "Дата релиза фильма должна быть после 18.12.1895")
     public boolean isValidReleaseDate() {
-        return releaseDate.isAfter(FILM_MIN_RELEASE_DATE);
+        return releaseDate.isAfter(filmMinReleaseDate);
     }
 
 }
