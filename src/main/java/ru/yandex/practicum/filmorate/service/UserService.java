@@ -40,8 +40,14 @@ public class UserService {
         }
 
         userToUpdate.setLogin(updatedUser.getLogin());
-        userToUpdate.setName(updatedUser.getLogin());
         userToUpdate.setEmail(updatedUser.getEmail());
+
+
+        if (updatedUser.getName() != null) {
+            userToUpdate.setName(updatedUser.getName());
+        } else {
+            userToUpdate.setName(updatedUser.getLogin());
+        }
 
         if (userToUpdate.getBirthday() != null) {
             userToUpdate.setBirthday(updatedUser.getBirthday());

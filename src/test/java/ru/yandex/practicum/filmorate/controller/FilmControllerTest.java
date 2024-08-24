@@ -5,6 +5,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -31,6 +32,7 @@ class FilmControllerTest {
         validator = validatorFactory.getValidator();
     }
 
+
     @BeforeEach
     @DisplayName("Инициализирующий метод")
     void init() {
@@ -42,10 +44,7 @@ class FilmControllerTest {
     @Test
     @DisplayName("Метод проверяет корректность создания фильма с валидными данными и добавлением в сервис хранеия")
     void validateFilmWithCorrectDate() {
-        film.setName("Гарфилд");
-        film.setDescription("рыжий кот");
-        film.setReleaseDate(LocalDate.of(2010, 1, 1));
-        film.setDuration(120);
+        defaultFilmSettings();
 
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         Assertions.assertTrue(violations.isEmpty(), "Ожидается, что валидация пройдёт успешно");
@@ -53,6 +52,7 @@ class FilmControllerTest {
         filmService.addNewFilm(film);
         Assertions.assertEquals(1, filmService.getAllFilms().size(), "разрмер getAllFilms должно быть 1");
     }
+
 
     @Test
     @DisplayName("Метод проверяет корректность создания фильма с невалидными данными")
@@ -64,49 +64,49 @@ class FilmControllerTest {
         Assertions.assertFalse(violations.isEmpty(), "Ожидается, что произойдёт ошибка валидации");
     }
 
+
     @Test
     @DisplayName("Метод проверяет корректность генерации id для фильма и последующего обновления фильма по id")
     void validateFilmIdAndUpdate() {
+        defaultFilmSettings();
+
+        // получаем первый объект из коллекции
+        filmService.addNewFilm(film);
+        Collection<Film> allFilms = filmService.getAllFilms();
+        Film filmToUpgrade = allFilms.iterator().next();
+
+        // обновляем name и обновляем значение в сервисе хрения
+        filmToUpgrade.setName("Рыжий Гарфилд");
+        filmService.updateFilm(filmToUpgrade);
+        Collection<Film> allFilms1 = filmService.getAllFilms();
+        Film updatedFilm = allFilms.iterator().next();
+
+        Assertions.assertEquals(1, updatedFilm.getId(), "idGenerator генерирует неккоректный id");
+        Assertions.assertEquals("Рыжий Гарфилд", updatedFilm.getName(),
+                "Некорректный update фильма по названию");
+
+    }
+
+
+    @Test
+    @DisplayName("Проверяем корректность срабатывания исключения при неправлиьном id")
+    void notFoundExceptionTest() {
+        defaultFilmSettings();
+        filmService.addNewFilm(film);
+
+        film.setId(2L);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            filmService.updateFilm(film);
+        }, "Должно быть выброшено исключения из-за отсутсвия Film с id 2");
+    }
+
+
+    private void defaultFilmSettings() {
         film.setName("Гарфилд");
         film.setDescription("рыжий кот");
         film.setReleaseDate(LocalDate.of(2010, 1, 1));
         film.setDuration(120);
-
-        Assertions.assertEquals(1, film.getId(), "idGenerator генерирует неккоректный id");
-
-        // получаем первый объект из коллекции
-        Collection<Film> allFilms = filmService.getAllFilms();
-        Film filmToUpgrade = allFilms.iterator().next();
-
-        // TODO НУЖНО ПОМЕНЯТЬ ОБЪЕКТ ПО ЕГО id и проверить, что всё работает
-
-
-        // вариант поиска по конкретному id.
-//        Film filmToUpgrade = allFilms.stream()
-//            .filter(film -> film.getId().equals(filmIdToFind))
-//            .findFirst()
-//            .orElse(null);
     }
-
-
-
-
-
-
-
-
-    @Test
-    @DisplayName("Метод провверяет корректность возращения фильмов")
-    public void shouldReturnAllFilmsCorrectly() {
-        Collection<Film> listOfFilms = filmService.getAllFilms();
-        Assertions.assertEquals(0, listOfFilms.size(), "Метод getAllFilms должен возвращать 0");
-
-        Film newFilm = new Film();
-
-        filmService.addNewFilm(newFilm);
-        Assertions.assertEquals(1, listOfFilms.size(), "Метод getAllFilms должен возвращать 1");
-
-    }
-
 
 }
