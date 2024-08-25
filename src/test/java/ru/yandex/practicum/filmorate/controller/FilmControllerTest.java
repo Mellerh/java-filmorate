@@ -22,7 +22,7 @@ class FilmControllerTest {
 
     // сервис для хренения фильмов
     private FilmService filmService;
-    Film film;
+    private Film film;
 
 
     @BeforeAll

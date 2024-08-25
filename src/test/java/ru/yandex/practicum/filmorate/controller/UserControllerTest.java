@@ -23,7 +23,7 @@ class UserControllerTest {
 
     // сервис для хренения фильмов
     private UserService userService;
-    User user;
+    private User user;
 
 
     @BeforeAll

@@ -27,14 +27,18 @@ public class FilmService {
     }
 
     public Film addNewFilm(Film newFilm) {
+        log.info("Add Film: {} - Started", newFilm);
+
         newFilm.setId(idGenerator());
         filmMap.put(newFilm.getId(), newFilm);
 
+        log.info("Add Film: {} - Finished", newFilm);
         return newFilm;
     }
 
 
     public Film updateFilm(Film updatedFilm) {
+        log.info("Update Film: {} - Started", updatedFilm);
 
         // если фильма с переданным id нет в списке, выбрасываем исключение
         Film filmToUpdate = filmMap.get(updatedFilm.getId());
@@ -54,6 +58,8 @@ public class FilmService {
             filmToUpdate.setDuration(updatedFilm.getDuration());
         }
 
+
+        log.info("Update Film: {} - Started", filmToUpdate);
         return filmToUpdate;
     }
 

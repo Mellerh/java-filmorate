@@ -20,7 +20,7 @@ public class UserController {
 
     // мы создали сервис userService, который будет хранить пользователей и правильно их обновлять.
     // это позволяет поддерживать принцип единой ответственности
-    UserService userService;
+    private final UserService userService;
 
     /**
      * аннотация @Autowired автоматичски внедрит FilmService в контроллер
@@ -38,23 +38,13 @@ public class UserController {
 
     @PostMapping
     public User createNewUser(@Valid @RequestBody User newUser) {
-        log.info("Add User: {} - Started", newUser);
-
-        User createdUser = userService.createNewUser(newUser);
-
-        log.info("Add User: {} - Finished", newUser);
-        return createdUser;
+        return userService.createNewUser(newUser);
     }
 
     @PutMapping
     @Validated(Update.class)
     public User updateUser(@Valid @RequestBody User updatedUser) {
-        log.info("Update User: {} - Started", updatedUser);
-
-        User userToUpdate = userService.updateUser(updatedUser);
-
-        log.info("Update User: {} - Finished", updatedUser);
-        return userToUpdate;
+        return userService.updateUser(updatedUser);
     }
 
 

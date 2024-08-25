@@ -17,21 +17,25 @@ import java.util.Map;
 @Service
 public class UserService {
 
-    Long id = 0L;
-    Map<Long, User> userMap = new HashMap<>();
+    private Long id = 0L;
+    private final Map<Long, User> userMap = new HashMap<>();
 
     public Collection<User> getAllUsers() {
         return userMap.values();
     }
 
     public User createNewUser(User newUser) {
+        log.info("Add User: {} - Started", newUser);
+
         newUser.setId(idGenerator());
         userMap.put(newUser.getId(), newUser);
 
+        log.info("Add User: {} - Finished", newUser);
         return newUser;
     }
 
     public User updateUser(User updatedUser) {
+        log.info("Update User: {} - Started", updatedUser);
 
         User userToUpdate = userMap.get(updatedUser.getId());
         if (userToUpdate == null) {
@@ -53,6 +57,7 @@ public class UserService {
             userToUpdate.setBirthday(updatedUser.getBirthday());
         }
 
+        log.info("Update User: {} - Finished", updatedUser);
         return userToUpdate;
     }
 
