@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.model.Update;
+import ru.yandex.practicum.filmorate.service.filmService.FilmService;
+import ru.yandex.practicum.filmorate.service.filmService.FilmServiceIml;
 
 import java.util.Collection;
 
@@ -22,7 +24,7 @@ public class FilmController {
      * аннотация @Autowired автоматичски внедрит FilmService в контроллер
      */
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmServiceIml filmService) {
         this.filmService = filmService;
     }
 
@@ -32,6 +34,10 @@ public class FilmController {
         return filmService.getAllFilms();
     }
 
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        return filmService.getFilmById(id);
+    }
 
     @PostMapping
     public Film addNewFilm(@Valid @RequestBody Film newFilm) {

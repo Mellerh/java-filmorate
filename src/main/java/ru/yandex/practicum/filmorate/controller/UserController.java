@@ -5,8 +5,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Update;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.userService.UserService;
+import ru.yandex.practicum.filmorate.service.userService.UserServiceIml;
 
 import java.util.Collection;
 
@@ -24,7 +26,7 @@ public class UserController {
      * аннотация @Autowired автоматичски внедрит FilmService в контроллер
      */
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserServiceIml userService) {
         this.userService = userService;
     }
 
@@ -32,6 +34,11 @@ public class UserController {
     @GetMapping
     public Collection<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("{/id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping

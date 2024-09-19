@@ -5,9 +5,10 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.filmService.FilmService;
+import ru.yandex.practicum.filmorate.service.filmService.FilmServiceIml;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -36,7 +37,7 @@ class FilmControllerTest {
     @BeforeEach
     @DisplayName("Инициализирующий метод")
     void init() {
-        filmService = new FilmService();
+        filmService = new FilmServiceIml();
         film = new Film();
     }
 
