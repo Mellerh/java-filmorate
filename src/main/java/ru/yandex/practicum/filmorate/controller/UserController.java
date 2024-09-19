@@ -36,10 +36,6 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
-    }
 
     @PostMapping
     public User createNewUser(@Valid @RequestBody User newUser) {
@@ -52,5 +48,9 @@ public class UserController {
         return userService.updateUser(updatedUser);
     }
 
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
 
 }
