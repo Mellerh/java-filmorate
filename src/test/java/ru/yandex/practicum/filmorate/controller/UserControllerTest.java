@@ -7,6 +7,8 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
 import ru.yandex.practicum.filmorate.service.userService.UserServiceIml;
 
 import java.time.LocalDate;
@@ -22,7 +24,9 @@ class UserControllerTest {
     private static Validator validator;
 
     // сервис для хренения фильмов
+
     private UserServiceIml userService;
+    private UserStorage userStorage;
     private User user;
 
 
@@ -37,7 +41,7 @@ class UserControllerTest {
     @BeforeEach
     @DisplayName("Инициализирующий метод")
     void init() {
-        userService = new UserServiceIml();
+        userService = new UserServiceIml(new InMemoryUserStorage());
         user = new User();
     }
 
