@@ -48,9 +48,34 @@ public class UserController {
         return userService.updateUser(updatedUser);
     }
 
+
+    // Работаем с конкретным пользователем по id
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
+    @GetMapping("/{id}/friends")
+    public Collection<User> getAllUserFriends(@PathVariable Long id) {
+        return userService.getAllUserFriends(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addNewFriendById(@PathVariable Long id, @PathVariable Long friendId) {
+        return userService.addNewFriendById(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriendById(@PathVariable Long id, @PathVariable Long friendId) {
+        return userService.deleteFriendById(id, friendId);
+    }
+
+    /**
+     * возвращаем список друзей, общих с другим пользователем
+     */
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getAllCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getAllCommonFriends(id, otherId);
+    }
 }

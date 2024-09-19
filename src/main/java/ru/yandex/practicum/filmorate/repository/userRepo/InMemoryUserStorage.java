@@ -6,12 +6,14 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
     private Long id = 0L;
     private final Map<Long, User> userMap = new HashMap<>();
+    private final Map<Long, Set<Long>> userFriendsList = new HashMap<>();
 
 
     @Override
@@ -31,6 +33,31 @@ public class InMemoryUserStorage implements UserStorage {
 
         return newUser;
     }
+
+    @Override
+    public User updateUser(User updatedUser) {
+        return userMap.put(updatedUser.getId(), updatedUser);
+    }
+
+
+    @Override
+    public Set<Long> getAllUserFriendsIds(Long id) {
+        return userFriendsList.get(id);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**

@@ -9,6 +9,8 @@ import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * сервис для реализации логики по добавлению/апДейту User
@@ -25,20 +27,10 @@ public class UserServiceIml implements UserService {
         this.inMemoryUserStorage = inMemoryUserStorage;
     }
 
+
     @Override
     public Collection<User> getAllUsers() {
         return inMemoryUserStorage.getAllUsers();
-    }
-
-    @Override
-    public User getUserById(Long id) {
-
-        User user = inMemoryUserStorage.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
-        }
-
-        return user;
     }
 
     @Override
@@ -58,18 +50,66 @@ public class UserServiceIml implements UserService {
         userToUpdate.setLogin(updatedUser.getLogin());
         userToUpdate.setEmail(updatedUser.getEmail());
 
-
-        if (updatedUser.getName() != null) {
-            userToUpdate.setName(updatedUser.getName());
-        } else {
-            userToUpdate.setName(updatedUser.getLogin());
-        }
+//
+//        if (updatedUser.getName() != null) {
+//            userToUpdate.setName(updatedUser.getName());
+//        } else {
+//            userToUpdate.setName(updatedUser.getLogin());
+//        }
 
         if (userToUpdate.getBirthday() != null) {
             userToUpdate.setBirthday(updatedUser.getBirthday());
         }
 
-        return userToUpdate;
+        return inMemoryUserStorage.updateUser(updatedUser);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+
+        User user = inMemoryUserStorage.getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+        }
+
+        return user;
+    }
+
+
+    /**
+     * возвращаем список всех друзей пользователя
+     * вся логика находится в сервисе, поэтому поиск друзей реализован тут. принцип единой ответственности
+     */
+    @Override
+    public Collection<User> getAllUserFriends(Long id) {
+        // получаем список id всех друзей пользователя
+        Set<Long> userFriendsIds = inMemoryUserStorage.getAllUserFriendsIds(id);
+
+        // снова обращаемся в сервис и возвращаем списко всех друзей пользователя
+        List<User> allUserFriends = userFriendsIds.stream()
+                .map(friendId -> inMemoryUserStorage.getUserById(friendId))
+                .filter(user -> user != null)
+                .toList();
+
+        return allUserFriends;
+    }
+
+    @Override
+    public User addNewFriendById(Long id, Long friendId) {
+        return null;
+    }
+
+    @Override
+    public User deleteFriendById(Long id, Long friendId) {
+        return null;
+    }
+
+    /**
+     * возвращаем список друзей, общих с другим пользователем
+     */
+    @Override
+    public Collection<User> getAllCommonFriends(Long id, Long otherId) {
+        return List.of();
     }
 
 }
