@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -18,37 +19,50 @@ public class FilmController {
 
     // мы создали сервис FilmService, который будет хранить фильмы и правильно их обновлять.
     // это позволяет поддерживать принцип единой ответственности
-    private final FilmService filmService;
+    private final FilmService filmServiceIml;
 
     /**
      * аннотация @Autowired автоматичски внедрит FilmService в контроллер
      */
     @Autowired
-    public FilmController(FilmServiceIml filmService) {
-        this.filmService = filmService;
+    public FilmController(FilmServiceIml filmServiceIml) {
+        this.filmServiceIml = filmService;
     }
+
 
 
     @GetMapping
     public Collection<Film> getAllFilms() {
-        return filmService.getAllFilms();
-    }
-
-    @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable Long id) {
-        return filmService.getFilmById(id);
+        return filmServiceIml.getAllFilms();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Film addNewFilm(@Valid @RequestBody Film newFilm) {
-        return filmService.addNewFilm(newFilm);
+        return filmServiceIml.addNewFilm(newFilm);
     }
-
 
     @PutMapping
     @Validated(Update.class)
     public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
-        return filmService.updateFilm(updatedFilm);
+        return filmServiceIml.updateFilm(updatedFilm);
+    }
+
+
+
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        return filmServiceIml.getFilmById(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addFilmLikeByUser(@PathVariable Long id, @PathVariable Long userId) {
+        filmServiceIml.addFilmLikeByUser(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteFilmLikeByUser(@PathVariable Long id, @PathVariable Long userId) {
+        filmServiceIml.deleteFilmLikeByUser(id, userId);
     }
 
 

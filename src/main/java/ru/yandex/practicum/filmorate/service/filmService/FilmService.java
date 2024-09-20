@@ -12,4 +12,8 @@ public interface FilmService {
     Film addNewFilm(Film newFilm);
 
     Film updateFilm(Film updatedFilm);
+
+    void addFilmLikeByUser(Long id, Long userId);
+
+    void deleteFilmLikeByUser(Long id, Long userId);
 }

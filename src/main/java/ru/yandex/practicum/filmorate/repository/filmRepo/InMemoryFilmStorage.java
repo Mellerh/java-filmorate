@@ -33,7 +33,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
-    /// TODO ДОБАВИТЬ updateFilm по аналогии с User
+    @Override
+    public Film updateFilm(Film updatedFilm) {
+        return filmMap.put(updatedFilm.getId(), updatedFilm);
+    }
 
     /**
      * метод для генерации id-пользователя

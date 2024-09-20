@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.repository.userRepo;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -31,6 +28,9 @@ public class InMemoryUserStorage implements UserStorage {
         newUser.setId(idGenerator());
         userMap.put(newUser.getId(), newUser);
 
+        // при создании нового пользователя мы всегда создаём для него путой список друзей
+        isFriendsSetExist(newUser.getId());
+
         return newUser;
     }
 
@@ -40,24 +40,31 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
 
+
     @Override
     public Set<Long> getAllUserFriendsIds(Long id) {
         return userFriendsList.get(id);
     }
 
+    @Override
+    public void addNewFriendById(Long userId, Long friendId) {
+        userFriendsList.get(userId).add(friendId);
+    }
+
+    @Override
+    public void deleteFriendById(Long userId, Long friendId) {
+        userFriendsList.get(userId).remove(friendId);
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Проверяем, есть ли список друзей у пользователя.
+     */
+    private void isFriendsSetExist(Long userId) {
+        if (!userFriendsList.containsKey(userId)) {
+            userFriendsList.put(userId, new HashSet<>());
+        }
+    }
 
 
     /**

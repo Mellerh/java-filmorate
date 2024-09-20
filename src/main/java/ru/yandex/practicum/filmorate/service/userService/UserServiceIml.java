@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,7 +49,7 @@ public class UserServiceIml implements UserService {
         userToUpdate.setLogin(updatedUser.getLogin());
         userToUpdate.setEmail(updatedUser.getEmail());
 
-//
+//        дополнительная логика, дублирующая логику в моделе User
 //        if (updatedUser.getName() != null) {
 //            userToUpdate.setName(updatedUser.getName());
 //        } else {
@@ -78,30 +77,46 @@ public class UserServiceIml implements UserService {
 
     /**
      * возвращаем список всех друзей пользователя
-     * вся логика находится в сервисе, поэтому поиск друзей реализован тут. принцип единой ответственности
+     * вся логика должна нахоидтся в сервисе, поэтому поиск друзей реализован тут.
+     * SRP - принцип единой ответственности
      */
     @Override
     public Collection<User> getAllUserFriends(Long id) {
-        // получаем список id всех друзей пользователя
-        Set<Long> userFriendsIds = inMemoryUserStorage.getAllUserFriendsIds(id);
+        User user = inMemoryUserStorage.getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+        }
 
         // снова обращаемся в сервис и возвращаем списко всех друзей пользователя
-        List<User> allUserFriends = userFriendsIds.stream()
+        // возвращаем List<User>
+        return inMemoryUserStorage.getAllUserFriendsIds(id).stream()
                 .map(friendId -> inMemoryUserStorage.getUserById(friendId))
-                .filter(user -> user != null)
+                .filter(userFriend -> userFriend != null)
                 .toList();
-
-        return allUserFriends;
     }
 
     @Override
-    public User addNewFriendById(Long id, Long friendId) {
-        return null;
+    public void addNewFriendById(Long id, Long friendId) {
+        // провреяем, существуют ли пользователи в репозитории
+        validateUserAndFriend(id, friendId);
+
+        // добавляем друга пользователю и наоборот
+        inMemoryUserStorage.addNewFriendById(id, friendId);
+        inMemoryUserStorage.addNewFriendById(friendId, id);
+
     }
 
     @Override
-    public User deleteFriendById(Long id, Long friendId) {
-        return null;
+    public void deleteFriendById(Long id, Long friendId) {
+        validateUserAndFriend(id, friendId);
+
+        // проверяем, есть один друг в списке у другого
+        if (!inMemoryUserStorage.getAllUserFriendsIds(id).contains(friendId)) {
+            throw new NotFoundException("Пользователь с id " + friendId + " не является другом пользователю с id " + id);
+        }
+
+        inMemoryUserStorage.deleteFriendById(id, friendId);
+        inMemoryUserStorage.deleteFriendById(friendId, id);
     }
 
     /**
@@ -109,7 +124,34 @@ public class UserServiceIml implements UserService {
      */
     @Override
     public Collection<User> getAllCommonFriends(Long id, Long otherId) {
-        return List.of();
+
+        validateUserAndFriend(id, otherId);
+
+        Set<Long> userFriends = inMemoryUserStorage.getAllUserFriendsIds(id);
+        Set<Long> otherUserFriends = inMemoryUserStorage.getAllUserFriendsIds(otherId);
+
+        return userFriends.stream()
+                .filter(userFrId -> otherUserFriends.contains(userFrId))
+                .map(commonFriendId -> inMemoryUserStorage.getUserById(commonFriendId))
+                .filter(user -> user != null)
+                .toList();
+
+    }
+
+
+    /**
+     * метод провряет, существуют ли пользователи в репозитории
+     */
+    private void validateUserAndFriend(Long id, Long friendId) {
+        User user = inMemoryUserStorage.getUserById(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+        }
+
+        User userFriend = inMemoryUserStorage.getUserById(friendId);
+        if (userFriend == null) {
+            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+        }
     }
 
 }

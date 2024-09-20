@@ -12,4 +12,5 @@ public interface FilmStorage {
 
     Film saveFilm(Film film);
 
+    Film updateFilm(Film updatedFilm);
 }

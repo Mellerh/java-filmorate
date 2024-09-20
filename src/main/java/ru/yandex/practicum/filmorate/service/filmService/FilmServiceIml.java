@@ -33,17 +33,6 @@ public class FilmServiceIml implements FilmService {
     }
 
     @Override
-    public Film getFilmById(Long id) {
-
-        Film film = inMemoryFilmStorage.getFilmById(id);
-        if (film == null) {
-            throw new NotFoundException("Фильм с id " + id + " не найден.");
-        }
-
-        return film;
-    }
-
-    @Override
     public Film addNewFilm(Film newFilm) {
         return inMemoryFilmStorage.saveFilm(newFilm);
     }
@@ -69,8 +58,29 @@ public class FilmServiceIml implements FilmService {
             filmToUpdate.setDuration(updatedFilm.getDuration());
         }
 
-        return filmToUpdate;
+        return inMemoryFilmStorage.updateFilm(filmToUpdate);
     }
 
+
+    @Override
+    public Film getFilmById(Long id) {
+
+        Film film = inMemoryFilmStorage.getFilmById(id);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id " + id + " не найден.");
+        }
+
+        return film;
+    }
+
+    @Override
+    public void addFilmLikeByUser(Long id, Long userId) {
+        /// TODO
+    }
+
+    @Override
+    public void deleteFilmLikeByUser(Long id, Long userId) {
+        /// TODO
+    }
 
 }
