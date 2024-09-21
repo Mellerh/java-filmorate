@@ -26,7 +26,7 @@ public class FilmController {
      */
     @Autowired
     public FilmController(FilmServiceIml filmServiceIml) {
-        this.filmServiceIml = filmService;
+        this.filmServiceIml = filmServiceIml;
     }
 
 
@@ -63,6 +63,16 @@ public class FilmController {
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteFilmLikeByUser(@PathVariable Long id, @PathVariable Long userId) {
         filmServiceIml.deleteFilmLikeByUser(id, userId);
+    }
+
+    /**
+     * возвращает список из первых count фильмов по количеству лайков.
+     * Если значение параметра count не задано, вернёт первые 10
+     * ?count={count}
+     */
+    @GetMapping("/popular")
+    public Collection<Film> returnTopFilms(@RequestParam(required = false) Long count) {
+        return null;
     }
 
 

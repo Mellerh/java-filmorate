@@ -5,10 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.filmRepo.FilmStorage;
 import ru.yandex.practicum.filmorate.repository.filmRepo.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -20,10 +25,12 @@ import java.util.Collection;
 public class FilmServiceIml implements FilmService {
 
     private final FilmStorage inMemoryFilmStorage;
+    private final UserStorage inMemoryUserStorage;
 
     @Autowired
-    public FilmServiceIml(InMemoryFilmStorage inMemoryFilmStorage) {
+    public FilmServiceIml(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
+        this.inMemoryUserStorage = inMemoryUserStorage;
     }
 
 
@@ -74,13 +81,50 @@ public class FilmServiceIml implements FilmService {
     }
 
     @Override
-    public void addFilmLikeByUser(Long id, Long userId) {
-        /// TODO
+    public void addFilmLikeByUser(Long filmId, Long userId) {
+        validateUserAndFriend(filmId, userId);
+
+        inMemoryFilmStorage.addFilmLikeByUser(filmId, userId);
     }
 
     @Override
-    public void deleteFilmLikeByUser(Long id, Long userId) {
-        /// TODO
+    public void deleteFilmLikeByUser(Long filmId, Long userId) {
+        validateUserAndFriend(filmId, userId);
+
+        inMemoryFilmStorage.deleteFilmLikeByUser(filmId, userId);
+    }
+
+    @Override
+    public Collection<Film> returnTopFilms(Long count) {
+        if (count == null) {
+            count = 10L;
+        }
+
+        // получаем мапу фильмов с лайками
+        Map<Long, Set<Long>> filmLikesMap = inMemoryFilmStorage.returnTopFilms();
+
+        // сортируем фильмы по количеству лайков и ограничиваем результат значением count
+        return filmLikesMap.entrySet().stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size())) // Сортируем по количеству лайков
+                .limit(count) // Ограничиваем результат
+                .map(entry -> inMemoryFilmStorage.getFilmById(entry.getKey())) // Получаем объекты фильмов по их id
+                .toList(); // Собираем в список
+    }
+
+
+    /**
+     * метод провряет, существуют ли филь и пользователя в репозитории
+     */
+    private void validateUserAndFriend(Long filmId, Long userId) {
+        Film film = inMemoryFilmStorage.getFilmById(filmId);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
+        }
+
+        User user = inMemoryUserStorage.getUserById(userId);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
+        }
     }
 
 }

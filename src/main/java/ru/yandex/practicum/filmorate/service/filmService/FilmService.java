@@ -16,4 +16,6 @@ public interface FilmService {
     void addFilmLikeByUser(Long id, Long userId);
 
     void deleteFilmLikeByUser(Long id, Long userId);
+
+    Collection<Film> returnTopFilms(Long count);
 }

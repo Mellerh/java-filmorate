@@ -58,7 +58,7 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     /**
-     * Проверяем, есть ли список друзей у пользователя.
+     * создаём для пользователя путой список друзей
      */
     private void isFriendsSetExist(Long userId) {
         if (!userFriendsList.containsKey(userId)) {
