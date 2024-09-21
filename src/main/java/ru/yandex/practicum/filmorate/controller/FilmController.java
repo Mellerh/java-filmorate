@@ -49,7 +49,7 @@ public class FilmController {
     }
 
 
-
+    // Работаем с конкретным фильмом по id
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
         return filmServiceIml.getFilmById(id);
@@ -72,7 +72,7 @@ public class FilmController {
      */
     @GetMapping("/popular")
     public Collection<Film> returnTopFilms(@RequestParam(required = false) Long count) {
-        return null;
+        return filmServiceIml.returnTopFilms(count);
     }
 
 

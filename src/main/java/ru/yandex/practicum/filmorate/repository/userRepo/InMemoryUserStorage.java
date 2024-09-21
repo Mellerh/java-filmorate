@@ -53,6 +53,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void deleteFriendById(Long userId, Long friendId) {
+        // если у пользователя не окажется в списке друзей другой пользователь
+        // remove просто вернёт false, если элемент не был найден
+        // и не выбросит исключение.
         userFriendsList.get(userId).remove(friendId);
     }
 

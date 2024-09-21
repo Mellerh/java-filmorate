@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.filmRepo.FilmStorage;
 import ru.yandex.practicum.filmorate.repository.filmRepo.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.service.filmService.FilmService;
 import ru.yandex.practicum.filmorate.service.filmService.FilmServiceIml;
 
@@ -41,7 +42,9 @@ class FilmControllerTest {
     @BeforeEach
     @DisplayName("Инициализирующий метод")
     void init() {
-        filmService = new FilmServiceIml(new InMemoryFilmStorage());
+        filmService = new FilmServiceIml(
+                new InMemoryFilmStorage(),
+                new InMemoryUserStorage());
         film = new Film();
     }
 

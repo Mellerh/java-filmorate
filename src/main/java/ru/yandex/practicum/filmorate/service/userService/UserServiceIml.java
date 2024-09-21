@@ -49,12 +49,12 @@ public class UserServiceIml implements UserService {
         userToUpdate.setLogin(updatedUser.getLogin());
         userToUpdate.setEmail(updatedUser.getEmail());
 
-//        дополнительная логика, дублирующая логику в моделе User
-//        if (updatedUser.getName() != null) {
-//            userToUpdate.setName(updatedUser.getName());
-//        } else {
-//            userToUpdate.setName(updatedUser.getLogin());
-//        }
+//        логика, дополняющая isNameValid() в User, для обновления полей пользователя
+        if (updatedUser.getName() != null) {
+            userToUpdate.setName(updatedUser.getName());
+        } else {
+            userToUpdate.setName(updatedUser.getLogin());
+        }
 
         if (userToUpdate.getBirthday() != null) {
             userToUpdate.setBirthday(updatedUser.getBirthday());
@@ -110,11 +110,10 @@ public class UserServiceIml implements UserService {
     public void deleteFriendById(Long id, Long friendId) {
         validateUserAndFriend(id, friendId);
 
-        // проверяем, есть один друг в списке у другого
-        if (!inMemoryUserStorage.getAllUserFriendsIds(id).contains(friendId)) {
-            throw new NotFoundException("Пользователь с id " + friendId + " не является другом пользователю с id " + id);
-        }
 
+        // если у пользователя не окажется в списке друзей другой пользователь
+        // remove просто вернёт false, если элемент не был найден
+        // и не выбросит исключение.
         inMemoryUserStorage.deleteFriendById(id, friendId);
         inMemoryUserStorage.deleteFriendById(friendId, id);
     }

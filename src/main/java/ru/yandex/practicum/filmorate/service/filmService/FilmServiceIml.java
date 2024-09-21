@@ -69,6 +69,7 @@ public class FilmServiceIml implements FilmService {
     }
 
 
+    // Работаем с конкретным фильмом по id
     @Override
     public Film getFilmById(Long id) {
 
@@ -108,6 +109,7 @@ public class FilmServiceIml implements FilmService {
                 .sorted((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size())) // Сортируем по количеству лайков
                 .limit(count) // Ограничиваем результат
                 .map(entry -> inMemoryFilmStorage.getFilmById(entry.getKey())) // Получаем объекты фильмов по их id
+                .filter(film -> film != null)
                 .toList(); // Собираем в список
     }
 

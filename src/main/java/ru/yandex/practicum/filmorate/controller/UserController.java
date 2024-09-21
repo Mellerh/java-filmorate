@@ -74,7 +74,6 @@ public class UserController {
         userService.deleteFriendById(id, friendId);
     }
 
-
     /**
      * возвращаем список друзей, общих с другим пользователем
      */
