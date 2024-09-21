@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * сервис для реализации логики по добавлению/апДейту User
@@ -19,29 +17,29 @@ import java.util.Set;
 @Service
 public class UserServiceIml implements UserService {
 
-    private final UserStorage inMemoryUserStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public UserServiceIml(InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserServiceIml(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
 
     @Override
     public Collection<User> getAllUsers() {
-        return inMemoryUserStorage.getAllUsers();
+        return userStorage.getAllUsers();
     }
 
     @Override
     public User createNewUser(User newUser) {
-        return inMemoryUserStorage.saveUser(newUser);
+        return userStorage.saveUser(newUser);
     }
 
     @Override
     public User updateUser(User updatedUser) {
 //        log.info("Update User: {} - Started", updatedUser);
 
-        User userToUpdate = inMemoryUserStorage.getUserById(updatedUser.getId());
+        User userToUpdate = userStorage.getUserById(updatedUser.getId());
         if (userToUpdate == null) {
             throw new NotFoundException("Пользователь с " + updatedUser.getId() + " не найден.");
         }
@@ -60,13 +58,13 @@ public class UserServiceIml implements UserService {
             userToUpdate.setBirthday(updatedUser.getBirthday());
         }
 
-        return inMemoryUserStorage.updateUser(updatedUser);
+        return userStorage.updateUser(updatedUser);
     }
 
     @Override
     public User getUserById(Long id) {
 
-        User user = inMemoryUserStorage.getUserById(id);
+        User user = userStorage.getUserById(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
@@ -77,22 +75,16 @@ public class UserServiceIml implements UserService {
 
     /**
      * возвращаем список всех друзей пользователя
-     * вся логика должна нахоидтся в сервисе, поэтому поиск друзей реализован тут.
      * SRP - принцип единой ответственности
      */
     @Override
     public Collection<User> getAllUserFriends(Long id) {
-        User user = inMemoryUserStorage.getUserById(id);
+        User user = userStorage.getUserById(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
 
-        // снова обращаемся в сервис и возвращаем списко всех друзей пользователя
-        // возвращаем List<User>
-        return inMemoryUserStorage.getAllUserFriendsIds(id).stream()
-                .map(friendId -> inMemoryUserStorage.getUserById(friendId))
-                .filter(userFriend -> userFriend != null)
-                .toList();
+        return userStorage.getAllUserFriendsIds(id);
     }
 
     @Override
@@ -101,8 +93,8 @@ public class UserServiceIml implements UserService {
         validateUserAndFriend(id, friendId);
 
         // добавляем друга пользователю и наоборот
-        inMemoryUserStorage.addNewFriendById(id, friendId);
-        inMemoryUserStorage.addNewFriendById(friendId, id);
+        userStorage.addNewFriendById(id, friendId);
+        userStorage.addNewFriendById(friendId, id);
 
     }
 
@@ -114,8 +106,8 @@ public class UserServiceIml implements UserService {
         // если у пользователя не окажется в списке друзей другой пользователь
         // remove просто вернёт false, если элемент не был найден
         // и не выбросит исключение.
-        inMemoryUserStorage.deleteFriendById(id, friendId);
-        inMemoryUserStorage.deleteFriendById(friendId, id);
+        userStorage.deleteFriendById(id, friendId);
+        userStorage.deleteFriendById(friendId, id);
     }
 
     /**
@@ -126,15 +118,7 @@ public class UserServiceIml implements UserService {
 
         validateUserAndFriend(id, otherId);
 
-        Set<Long> userFriends = inMemoryUserStorage.getAllUserFriendsIds(id);
-        Set<Long> otherUserFriends = inMemoryUserStorage.getAllUserFriendsIds(otherId);
-
-        return userFriends.stream()
-                .filter(userFrId -> otherUserFriends.contains(userFrId))
-                .map(commonFriendId -> inMemoryUserStorage.getUserById(commonFriendId))
-                .filter(user -> user != null)
-                .toList();
-
+        return userStorage.getAllCommonFriends(id, otherId);
     }
 
 
@@ -142,12 +126,12 @@ public class UserServiceIml implements UserService {
      * метод провряет, существуют ли пользователи в репозитории
      */
     private void validateUserAndFriend(Long id, Long friendId) {
-        User user = inMemoryUserStorage.getUserById(id);
+        User user = userStorage.getUserById(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
 
-        User userFriend = inMemoryUserStorage.getUserById(friendId);
+        User userFriend = userStorage.getUserById(friendId);
         if (userFriend == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }

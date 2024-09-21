@@ -42,8 +42,14 @@ public class InMemoryUserStorage implements UserStorage {
 
 
     @Override
-    public Set<Long> getAllUserFriendsIds(Long id) {
-        return userFriendsList.get(id);
+    public List<User> getAllUserFriendsIds(Long id) {
+
+        // возвращаем списко всех друзей пользователя
+        return userFriendsList.get(id)
+                .stream()
+                .map(friendId -> getUserById(friendId))
+                .filter(userFriend -> userFriend != null)
+                .toList();
     }
 
     @Override
@@ -57,6 +63,22 @@ public class InMemoryUserStorage implements UserStorage {
         // remove просто вернёт false, если элемент не был найден
         // и не выбросит исключение.
         userFriendsList.get(userId).remove(friendId);
+    }
+
+    /**
+     * возвращаем список друзей, общих с другим пользователем
+     */
+    @Override
+    public List<User> getAllCommonFriends(Long id, Long otherId) {
+
+        Set<Long> otherUserFriends = userFriendsList.get(otherId);
+
+        // получаем список всех id-друзей первого пользователя и сравниваем с id из otherUserFriends
+        return userFriendsList.get(id).stream()
+                .filter(userFrId -> otherUserFriends.contains(userFrId))
+                .map(commonFriendId -> getUserById(commonFriendId))
+                .filter(user -> user != null)
+                .toList();
     }
 
 

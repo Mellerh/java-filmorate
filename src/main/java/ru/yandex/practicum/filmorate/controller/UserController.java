@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Update;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.userService.UserService;
-import ru.yandex.practicum.filmorate.service.userService.UserServiceIml;
 
 import java.util.Collection;
 
@@ -27,7 +26,7 @@ public class UserController {
      * аннотация @Autowired автоматичски внедрит FilmService в контроллер
      */
     @Autowired
-    public UserController(UserServiceIml userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

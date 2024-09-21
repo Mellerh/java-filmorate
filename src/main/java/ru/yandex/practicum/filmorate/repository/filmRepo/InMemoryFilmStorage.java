@@ -54,8 +54,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Map<Long, Set<Long>> returnTopFilms() {
-        return filmLikes;
+    public Collection<Film> returnTopFilms(Long count) {
+
+        // сортируем фильмы по количеству лайков и ограничиваем результат значением count
+        return filmLikes.entrySet().stream()
+                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size())) // Сортируем по количеству лайков
+                .limit(count) // Ограничиваем результат
+                .map(entry -> getFilmById(entry.getKey())) // Получаем объекты фильмов по их id
+                .filter(film -> film != null)
+                .toList();
     }
 
     /**

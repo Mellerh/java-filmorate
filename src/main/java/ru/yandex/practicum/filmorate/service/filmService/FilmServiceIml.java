@@ -7,13 +7,9 @@ import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.filmRepo.FilmStorage;
-import ru.yandex.practicum.filmorate.repository.filmRepo.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -24,24 +20,24 @@ import java.util.Set;
 @Service
 public class FilmServiceIml implements FilmService {
 
-    private final FilmStorage inMemoryFilmStorage;
-    private final UserStorage inMemoryUserStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmServiceIml(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public FilmServiceIml(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
 
     @Override
     public Collection<Film> getAllFilms() {
-        return inMemoryFilmStorage.getAllFilms();
+        return filmStorage.getAllFilms();
     }
 
     @Override
     public Film addNewFilm(Film newFilm) {
-        return inMemoryFilmStorage.saveFilm(newFilm);
+        return filmStorage.saveFilm(newFilm);
     }
 
 
@@ -49,7 +45,7 @@ public class FilmServiceIml implements FilmService {
     public Film updateFilm(Film updatedFilm) {
 
         // если фильма с переданным id нет в списке, выбрасываем исключение
-        Film filmToUpdate = inMemoryFilmStorage.getFilmById(updatedFilm.getId());
+        Film filmToUpdate = filmStorage.getFilmById(updatedFilm.getId());
         if (filmToUpdate == null) {
             throw new NotFoundException("Фильм с id " + updatedFilm.getId() + " не найден.");
         }
@@ -65,7 +61,7 @@ public class FilmServiceIml implements FilmService {
             filmToUpdate.setDuration(updatedFilm.getDuration());
         }
 
-        return inMemoryFilmStorage.updateFilm(filmToUpdate);
+        return filmStorage.updateFilm(filmToUpdate);
     }
 
 
@@ -73,7 +69,7 @@ public class FilmServiceIml implements FilmService {
     @Override
     public Film getFilmById(Long id) {
 
-        Film film = inMemoryFilmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
         if (film == null) {
             throw new NotFoundException("Фильм с id " + id + " не найден.");
         }
@@ -85,14 +81,14 @@ public class FilmServiceIml implements FilmService {
     public void addFilmLikeByUser(Long filmId, Long userId) {
         validateUserAndFriend(filmId, userId);
 
-        inMemoryFilmStorage.addFilmLikeByUser(filmId, userId);
+        filmStorage.addFilmLikeByUser(filmId, userId);
     }
 
     @Override
     public void deleteFilmLikeByUser(Long filmId, Long userId) {
         validateUserAndFriend(filmId, userId);
 
-        inMemoryFilmStorage.deleteFilmLikeByUser(filmId, userId);
+        filmStorage.deleteFilmLikeByUser(filmId, userId);
     }
 
     @Override
@@ -101,16 +97,7 @@ public class FilmServiceIml implements FilmService {
             count = 10L;
         }
 
-        // получаем мапу фильмов с лайками
-        Map<Long, Set<Long>> filmLikesMap = inMemoryFilmStorage.returnTopFilms();
-
-        // сортируем фильмы по количеству лайков и ограничиваем результат значением count
-        return filmLikesMap.entrySet().stream()
-                .sorted((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size())) // Сортируем по количеству лайков
-                .limit(count) // Ограничиваем результат
-                .map(entry -> inMemoryFilmStorage.getFilmById(entry.getKey())) // Получаем объекты фильмов по их id
-                .filter(film -> film != null)
-                .toList(); // Собираем в список
+        return filmStorage.returnTopFilms(count);
     }
 
 
@@ -118,12 +105,12 @@ public class FilmServiceIml implements FilmService {
      * метод провряет, существуют ли филь и пользователя в репозитории
      */
     private void validateUserAndFriend(Long filmId, Long userId) {
-        Film film = inMemoryFilmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
         if (film == null) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
 
-        User user = inMemoryUserStorage.getUserById(userId);
+        User user = userStorage.getUserById(userId);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
         }
