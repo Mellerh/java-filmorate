@@ -5,13 +5,18 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.repository.filmRepo.FilmStorage;
+import ru.yandex.practicum.filmorate.repository.filmRepo.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.service.filmService.FilmService;
+import ru.yandex.practicum.filmorate.service.filmService.FilmServiceIml;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
+
 
 class FilmControllerTest {
 
@@ -22,6 +27,7 @@ class FilmControllerTest {
 
     // сервис для хренения фильмов
     private FilmService filmService;
+    private FilmStorage filmStorage;
     private Film film;
 
 
@@ -36,7 +42,9 @@ class FilmControllerTest {
     @BeforeEach
     @DisplayName("Инициализирующий метод")
     void init() {
-        filmService = new FilmService();
+        filmService = new FilmServiceIml(
+                new InMemoryFilmStorage(),
+                new InMemoryUserStorage());
         film = new Film();
     }
 

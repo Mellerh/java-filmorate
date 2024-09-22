@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.exception;
+package ru.yandex.practicum.filmorate.exception.exceptions;
 
 public class DuplicatedDataException extends RuntimeException {
 

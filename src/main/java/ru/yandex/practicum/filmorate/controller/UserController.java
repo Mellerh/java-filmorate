@@ -3,10 +3,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Update;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.userService.UserService;
 
 import java.util.Collection;
 
@@ -29,12 +31,15 @@ public class UserController {
     }
 
 
+
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Collection<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User createNewUser(@Valid @RequestBody User newUser) {
         return userService.createNewUser(newUser);
     }
@@ -46,4 +51,33 @@ public class UserController {
     }
 
 
+
+    // Работаем с конкретным пользователем по id
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getAllUserFriends(@PathVariable Long id) {
+        return userService.getAllUserFriends(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addNewFriendById(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addNewFriendById(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriendById(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.deleteFriendById(id, friendId);
+    }
+
+    /**
+     * возвращаем список друзей, общих с другим пользователем
+     */
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getAllCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getAllCommonFriends(id, otherId);
+    }
 }
