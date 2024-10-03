@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Data
@@ -34,7 +36,15 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     Integer duration;
 
+    Set<String> genre = new HashSet<>();
 
+    // возрастной рейтинг фильма
+    String mpa;
+
+
+    /**
+     * валидация входных данных в контроллерах
+     */
     @AssertTrue(message = "Дата релиза фильма должна быть после 18.12.1895")
     public boolean isValidReleaseDate() {
         return releaseDate.isAfter(filmMinReleaseDate);

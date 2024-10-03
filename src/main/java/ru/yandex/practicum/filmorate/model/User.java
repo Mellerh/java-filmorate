@@ -27,6 +27,8 @@ public class User {
     @Past(message = "Дата рождения не может быть в будущем")
     LocalDate birthday;
 
+    FriendStatus friendStatus;
+
     /**
      * аннотация метода валидации позволяет создать кастомную проверку
      */
@@ -40,7 +42,6 @@ public class User {
     }
 
 }
-
 
 //{
 //        "email": "vas@yande.ru",

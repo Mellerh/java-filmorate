@@ -18,50 +18,50 @@ public class FilmController {
 
     // мы создали сервис FilmService, который будет хранить фильмы и правильно их обновлять.
     // это позволяет поддерживать принцип единой ответственности
-    private final FilmService filmServiceIml;
+    private final FilmService filmService;
 
     /**
      * аннотация @Autowired автоматичски внедрит FilmService в контроллер
      */
     @Autowired
     public FilmController(FilmService filmService) {
-        this.filmServiceIml = filmService;
+        this.filmService = filmService;
     }
 
 
 
     @GetMapping
     public Collection<Film> getAllFilms() {
-        return filmServiceIml.getAllFilms();
+        return filmService.getAllFilms();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film addNewFilm(@Valid @RequestBody Film newFilm) {
-        return filmServiceIml.addNewFilm(newFilm);
+        return filmService.addNewFilm(newFilm);
     }
 
     @PutMapping
     @Validated(Update.class)
     public Film updateFilm(@Valid @RequestBody Film updatedFilm) {
-        return filmServiceIml.updateFilm(updatedFilm);
+        return filmService.updateFilm(updatedFilm);
     }
 
 
     // Работаем с конкретным фильмом по id
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
-        return filmServiceIml.getFilmById(id);
+        return filmService.getFilmById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void addFilmLikeByUser(@PathVariable Long id, @PathVariable Long userId) {
-        filmServiceIml.addFilmLikeByUser(id, userId);
+        filmService.addFilmLikeByUser(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteFilmLikeByUser(@PathVariable Long id, @PathVariable Long userId) {
-        filmServiceIml.deleteFilmLikeByUser(id, userId);
+        filmService.deleteFilmLikeByUser(id, userId);
     }
 
     /**
@@ -71,7 +71,7 @@ public class FilmController {
      */
     @GetMapping("/popular")
     public Collection<Film> returnTopFilms(@RequestParam(required = false) Long count) {
-        return filmServiceIml.returnTopFilms(count);
+        return filmService.returnTopFilms(count);
     }
 
 
