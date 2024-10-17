@@ -7,7 +7,7 @@ import java.util.*;
 
 // используем название в Component, чтобы указывать его в @Qualifier для указания Spring, какую реалзиацию инжектить
 @Component("inMemoryUserStorage")
-public class InMemoryUserStorage implements UserStorage {
+public class InMemoryUserStorage implements UserRepository {
 
     private Long id = 0L;
     private final Map<Long, User> userMap = new HashMap<>();

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
 import java.util.Collection;
 
@@ -20,8 +20,8 @@ import java.util.Collection;
 public class UserServiceIml implements UserService {
 
     @Autowired
-    @Qualifier("userDbStorage")
-    private UserStorage userStorage;
+    @Qualifier("jdbcUserRepository")
+    private UserRepository userStorage;
 
 
 

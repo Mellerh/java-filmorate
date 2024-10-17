@@ -9,8 +9,8 @@ import java.util.List;
 
 // используем аннотацию @Qualifier, чтобы указывать её в @FilmServiceIml для указания Spring, какую реалзиацию инжектить
 @Component
-@Qualifier("filmDbStorage")
-public class FilmDbStorage implements FilmStorage {
+@Qualifier("jdbcFilmRepository")
+public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Collection<Film> getAllFilms() {

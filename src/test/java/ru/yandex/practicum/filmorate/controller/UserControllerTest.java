@@ -8,7 +8,7 @@ import org.junit.jupiter.api.*;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.userRepo.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
+import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 import ru.yandex.practicum.filmorate.service.userService.UserServiceIml;
 
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ class UserControllerTest {
     // сервис для хренения фильмов
 
     private UserServiceIml userService;
-    private UserStorage userStorage;
+    private UserRepository userStorage;
     private User user;
 
 

@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-@Qualifier("userDbStorage")
-public class UserDbStorage implements UserStorage {
+@Qualifier("jdbcUserRepository")
+public class JdbcUserRepository implements UserRepository {
 
     @Override
     public Collection<User> getAllUsers() {

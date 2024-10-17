@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.filmRepo.FilmStorage;
-import ru.yandex.practicum.filmorate.repository.userRepo.UserStorage;
+import ru.yandex.practicum.filmorate.repository.filmRepo.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
 import java.util.Collection;
 
@@ -22,12 +22,12 @@ import java.util.Collection;
 public class FilmServiceIml implements FilmService {
 
     @Autowired
-    @Qualifier("filmDbStorage")
-    private FilmStorage filmStorage;
+    @Qualifier("jdbcFilmRepository")
+    private FilmRepository filmStorage;
 
     @Autowired
-    @Qualifier("userDbStorage")
-    private UserStorage userStorage;
+    @Qualifier("jdbcUserRepository")
+    private UserRepository userStorage;
 
 
     @Override

@@ -7,7 +7,7 @@ import java.util.*;
 
 
 @Component("inMemoryFilmStorage")
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage implements FilmRepository {
 
     private Long id = 0L;
     private final Map<Long, Film> filmMap = new HashMap<>();
