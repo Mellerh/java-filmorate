@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.model.helpres.FriendStatus;
+import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
 
@@ -43,8 +45,3 @@ public class User {
 
 }
 
-//{
-//        "email": "vas@yande.ru",
-//        "login": "taras",
-//        "birthday": "1997-06-10"
-//        }

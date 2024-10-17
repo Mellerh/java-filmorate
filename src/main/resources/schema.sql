@@ -6,12 +6,14 @@ CREATE TABLE IF NOT EXISTS users (
   birthday TIMESTAMP
 );
 
+-- соединительная таблица
 CREATE TABLE IF NOT EXISTS friendship (
   user_id INT,
   friend_id INT,
   status VARCHAR
 );
 
+-- соединительная таблица
 CREATE TABLE IF NOT EXISTS film_user_likes (
   film_id INT,
   user_id INT
@@ -36,6 +38,7 @@ CREATE TABLE IF NOT EXISTS genres (
   name VARCHAR
 );
 
+-- соединительная таблица
 CREATE TABLE IF NOT EXISTS genre_film (
   genre_id INT,
   film_id INT

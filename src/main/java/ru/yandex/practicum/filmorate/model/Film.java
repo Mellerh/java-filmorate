@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -36,10 +37,10 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     Integer duration;
 
-    Set<String> genre = new HashSet<>();
+    Set<Genre> genre = new HashSet<>();
 
     // возрастной рейтинг фильма
-    String mpa;
+    MPA MPA;
 
 
     /**

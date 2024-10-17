@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Update;
+import ru.yandex.practicum.filmorate.model.helpres.Update;
 import ru.yandex.practicum.filmorate.service.filmService.FilmService;
 
 import java.util.Collection;
