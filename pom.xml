@@ -43,6 +43,22 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+
+		<!-- подключаем jdbc -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<!-- подключаем h2 базу данных-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+			<version>2.1.210</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
