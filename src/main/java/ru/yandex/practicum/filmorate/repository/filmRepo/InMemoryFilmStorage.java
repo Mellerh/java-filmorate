@@ -5,7 +5,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
 
-@Component
+
+@Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private Long id = 0L;

@@ -5,7 +5,8 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
-@Component
+// используем название в Component, чтобы указывать его в @Qualifier для указания Spring, какую реалзиацию инжектить
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private Long id = 0L;
