@@ -2,7 +2,9 @@ package ru.yandex.practicum.filmorate.repository.filmRepo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -27,13 +29,39 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Film getFilmById(Long id) {
+
+
         return null;
     }
 
     @Override
     public Film saveFilm(Film film) {
+        // GeneratedKeyHolder для получения сгенерированного ключа из таблицы
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
-        return null;
+        // получаем id mpa для сохранение в таблицу film
+        // вариант, если с клиента приходит не id mpa, а название
+//        Integer mpa_id= jdbc.update("SELECT mpa_id FROM mpa WHERE name = :name",
+//                new MapSqlParameterSource("name", film.getMpa()));
+
+        MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("name", film.getName());
+        sqlParameterSource.addValue("description", film.getDescription());
+        sqlParameterSource.addValue("releaseDate", film.getReleaseDate());
+        sqlParameterSource.addValue("duration", film.getDuration());
+        sqlParameterSource.addValue("mpa_id", film.getMpa());
+
+
+        // вставляем данные в таблицу films
+        jdbc.update("INSERT INTO films (name, description, releaseDate, duration, mpa_id) " +
+                        "VALUES(:name, :description, :releaseDate, :duration, :mpa_id)",
+                sqlParameterSource,
+                keyHolder,
+                new String[]{"film_id"});
+
+
+        film.setId(keyHolder.getKeyAs(Long.class));
+        return film;
     }
 
     @Override

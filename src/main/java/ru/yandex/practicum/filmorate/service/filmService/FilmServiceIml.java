@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.filmRepo.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.genreRepo.GenreRepository;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.filmorate.repository.mpa.MpaRepository;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -58,6 +60,11 @@ public class FilmServiceIml implements FilmService {
         if (filmToUpdate == null) {
             throw new NotFoundException("Фильм с id " + updatedFilm.getId() + " не найден.");
         }
+
+        // получаем список id всех жанров
+        List<Long> genreIds = filmToUpdate.getGenres().stream().map(Genre::getId).toList();
+
+        // получаем
 
         filmToUpdate.setName(updatedFilm.getName());
         filmToUpdate.setReleaseDate(updatedFilm.getReleaseDate());
