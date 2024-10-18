@@ -62,20 +62,23 @@ public class FilmServiceIml implements FilmService {
         }
 
         // получаем список id всех жанров
-        List<Long> genreIds = filmToUpdate.getGenres().stream().map(Genre::getId).toList();
+        List<Integer> genreIds = filmToUpdate.getGenres().stream().map(Genre::getId).toList();
 
-        // получаем
+        // получаем список всех жанров, id которых есть у фильма
+        List<Genre> listOfGenres = genreRepository.getGenresByIds(genreIds);
+        if (genreIds.size() != listOfGenres.size()) {
+            throw new NotFoundException("Жанры не найдены");
+        }
 
         filmToUpdate.setName(updatedFilm.getName());
         filmToUpdate.setReleaseDate(updatedFilm.getReleaseDate());
 
-        if (updatedFilm.getDescription() != null) {
-            filmToUpdate.setDescription(updatedFilm.getDescription());
-        }
-
-        if (updatedFilm.getDuration() != null) {
-            filmToUpdate.setDuration(updatedFilm.getDuration());
-        }
+        // проверяемое обновление
+//        if (updatedFilm.getDescription() != null) {
+//            filmToUpdate.setDescription(updatedFilm.getDescription());
+//        }
+        filmToUpdate.setDescription();
+        filmToUpdate.setDuration(updatedFilm.getDuration());
 
         return filmRepository.updateFilm(filmToUpdate);
     }

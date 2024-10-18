@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = "id")
 public class Mpa {
 
-    Long id;
+    Integer id;
     String name;
 
 }

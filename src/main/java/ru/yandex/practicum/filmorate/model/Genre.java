@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = "id")
 public class Genre {
 
-    Long id;
+    Integer id;
     String name;
 
 }
