@@ -16,30 +16,29 @@ import java.util.Collection;
 
 @Slf4j
 @Service
-
 public class UserServiceIml implements UserService {
 
     @Autowired
     @Qualifier("jdbcUserRepository")
-    private UserRepository userStorage;
+    private UserRepository userRepository;
 
 
 
     @Override
     public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userRepository.getAllUsers();
     }
 
     @Override
     public User createNewUser(User newUser) {
-        return userStorage.saveUser(newUser);
+        return userRepository.saveUser(newUser);
     }
 
     @Override
     public User updateUser(User updatedUser) {
 //        log.info("Update User: {} - Started", updatedUser);
 
-        User userToUpdate = userStorage.getUserById(updatedUser.getId());
+        User userToUpdate = userRepository.getUserById(updatedUser.getId());
         if (userToUpdate == null) {
             throw new NotFoundException("Пользователь с " + updatedUser.getId() + " не найден.");
         }
@@ -58,13 +57,13 @@ public class UserServiceIml implements UserService {
             userToUpdate.setBirthday(updatedUser.getBirthday());
         }
 
-        return userStorage.updateUser(updatedUser);
+        return userRepository.updateUser(updatedUser);
     }
 
     @Override
     public User getUserById(Long id) {
 
-        User user = userStorage.getUserById(id);
+        User user = userRepository.getUserById(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
@@ -79,12 +78,12 @@ public class UserServiceIml implements UserService {
      */
     @Override
     public Collection<User> getAllUserFriends(Long id) {
-        User user = userStorage.getUserById(id);
+        User user = userRepository.getUserById(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
 
-        return userStorage.getAllUserFriendsIds(id);
+        return userRepository.getAllUserFriendsIds(id);
     }
 
     @Override
@@ -93,8 +92,8 @@ public class UserServiceIml implements UserService {
         validateUserAndFriend(id, friendId);
 
         // добавляем друга пользователю и наоборот
-        userStorage.addNewFriendById(id, friendId);
-        userStorage.addNewFriendById(friendId, id);
+        userRepository.addNewFriendById(id, friendId);
+        userRepository.addNewFriendById(friendId, id);
 
     }
 
@@ -106,8 +105,8 @@ public class UserServiceIml implements UserService {
         // если у пользователя не окажется в списке друзей другой пользователь
         // remove просто вернёт false, если элемент не был найден
         // и не выбросит исключение.
-        userStorage.deleteFriendById(id, friendId);
-        userStorage.deleteFriendById(friendId, id);
+        userRepository.deleteFriendById(id, friendId);
+        userRepository.deleteFriendById(friendId, id);
     }
 
     /**
@@ -118,7 +117,7 @@ public class UserServiceIml implements UserService {
 
         validateUserAndFriend(id, otherId);
 
-        return userStorage.getAllCommonFriends(id, otherId);
+        return userRepository.getAllCommonFriends(id, otherId);
     }
 
 
@@ -126,12 +125,12 @@ public class UserServiceIml implements UserService {
      * метод провряет, существуют ли пользователи в репозитории
      */
     private void validateUserAndFriend(Long id, Long friendId) {
-        User user = userStorage.getUserById(id);
+        User user = userRepository.getUserById(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }
 
-        User userFriend = userStorage.getUserById(friendId);
+        User userFriend = userRepository.getUserById(friendId);
         if (userFriend == null) {
             throw new NotFoundException("Пользователь с id " + id + " не найден.");
         }

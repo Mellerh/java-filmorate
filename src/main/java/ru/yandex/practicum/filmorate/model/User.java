@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ru.yandex.practicum.filmorate.model.helpres.FriendStatus;
 import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class User {
 
     @NotNull(groups = {Update.class})

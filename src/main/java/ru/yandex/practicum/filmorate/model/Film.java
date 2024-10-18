@@ -3,15 +3,16 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class Film {
 
     // делаем поле приватным, чтобы оно не попало в json-объект
@@ -37,10 +38,10 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     Integer duration;
 
-    Set<Genre> genre = new HashSet<>();
+    LinkedHashSet<Genre> genres;
 
     // возрастной рейтинг фильма
-    MPA MPA;
+    Mpa mpa;
 
 
     /**

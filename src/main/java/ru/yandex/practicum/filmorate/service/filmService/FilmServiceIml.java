@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.service.filmService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.filmRepo.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.genreRepo.GenreRepository;
+import ru.yandex.practicum.filmorate.repository.mpa.MpaRepository;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
 import java.util.Collection;
@@ -21,23 +22,31 @@ import java.util.Collection;
 @Service
 public class FilmServiceIml implements FilmService {
 
-    @Autowired
-    @Qualifier("jdbcFilmRepository")
-    private FilmRepository filmStorage;
+    private final FilmRepository filmRepository;
+    private final UserRepository userRepository;
+    private final GenreRepository genreRepository;
+    private final MpaRepository mpaRepository;
 
-    @Autowired
-    @Qualifier("jdbcUserRepository")
-    private UserRepository userStorage;
+    // с помощью @Qualifier явно указываем Спрингу, какую реализацию интерфейса инжектить
+    public FilmServiceIml(@Qualifier("jdbcFilmRepository") FilmRepository filmRepository,
+                          @Qualifier("jdbcUserRepository") UserRepository userRepository,
+                          GenreRepository genreRepository, MpaRepository mpaRepository) {
+        this.filmRepository = filmRepository;
+        this.userRepository = userRepository;
+        this.genreRepository = genreRepository;
+        this.mpaRepository = mpaRepository;
+    }
+
 
 
     @Override
     public Collection<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return filmRepository.getAllFilms();
     }
 
     @Override
     public Film addNewFilm(Film newFilm) {
-        return filmStorage.saveFilm(newFilm);
+        return filmRepository.saveFilm(newFilm);
     }
 
 
@@ -45,7 +54,7 @@ public class FilmServiceIml implements FilmService {
     public Film updateFilm(Film updatedFilm) {
 
         // если фильма с переданным id нет в списке, выбрасываем исключение
-        Film filmToUpdate = filmStorage.getFilmById(updatedFilm.getId());
+        Film filmToUpdate = filmRepository.getFilmById(updatedFilm.getId());
         if (filmToUpdate == null) {
             throw new NotFoundException("Фильм с id " + updatedFilm.getId() + " не найден.");
         }
@@ -61,7 +70,7 @@ public class FilmServiceIml implements FilmService {
             filmToUpdate.setDuration(updatedFilm.getDuration());
         }
 
-        return filmStorage.updateFilm(filmToUpdate);
+        return filmRepository.updateFilm(filmToUpdate);
     }
 
 
@@ -69,7 +78,7 @@ public class FilmServiceIml implements FilmService {
     @Override
     public Film getFilmById(Long id) {
 
-        Film film = filmStorage.getFilmById(id);
+        Film film = filmRepository.getFilmById(id);
         if (film == null) {
             throw new NotFoundException("Фильм с id " + id + " не найден.");
         }
@@ -81,14 +90,14 @@ public class FilmServiceIml implements FilmService {
     public void addFilmLikeByUser(Long filmId, Long userId) {
         validateUserAndFriend(filmId, userId);
 
-        filmStorage.addFilmLikeByUser(filmId, userId);
+        filmRepository.addFilmLikeByUser(filmId, userId);
     }
 
     @Override
     public void deleteFilmLikeByUser(Long filmId, Long userId) {
         validateUserAndFriend(filmId, userId);
 
-        filmStorage.deleteFilmLikeByUser(filmId, userId);
+        filmRepository.deleteFilmLikeByUser(filmId, userId);
     }
 
     @Override
@@ -97,7 +106,7 @@ public class FilmServiceIml implements FilmService {
             count = 10L;
         }
 
-        return filmStorage.returnTopFilms(count);
+        return filmRepository.returnTopFilms(count);
     }
 
 
@@ -105,12 +114,12 @@ public class FilmServiceIml implements FilmService {
      * метод провряет, существуют ли филь и пользователя в репозитории
      */
     private void validateUserAndFriend(Long filmId, Long userId) {
-        Film film = filmStorage.getFilmById(filmId);
+        Film film = filmRepository.getFilmById(filmId);
         if (film == null) {
             throw new NotFoundException("Фильм с id " + filmId + " не найден.");
         }
 
-        User user = userStorage.getUserById(userId);
+        User user = userRepository.getUserById(userId);
         if (user == null) {
             throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
         }
