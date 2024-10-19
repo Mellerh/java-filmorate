@@ -1,19 +1,20 @@
 package ru.yandex.practicum.filmorate.service.filmService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.filmGenreRepo.FilmGenreRepository;
 import ru.yandex.practicum.filmorate.repository.filmRepo.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.genreRepo.GenreRepository;
-import ru.yandex.practicum.filmorate.repository.mpa.MpaRepository;
+import ru.yandex.practicum.filmorate.repository.mpaRepo.MpaRepository;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 
 /**
@@ -24,20 +25,21 @@ import java.util.List;
 @Service
 public class FilmServiceIml implements FilmService {
 
-    private final FilmRepository filmRepository;
-    private final UserRepository userRepository;
-    private final GenreRepository genreRepository;
-    private final MpaRepository mpaRepository;
+    @Autowired
+    @Qualifier("jdbcUserRepository")
+    private UserRepository userRepository;
+
+    @Autowired
+    @Qualifier("jdbcFilmRepository")
+    private FilmRepository filmRepository;
+
+    @Autowired
+    private FilmGenreRepository filmGenreRepository;
+    @Autowired
+    private MpaRepository mpaRepository;
 
     // с помощью @Qualifier явно указываем Спрингу, какую реализацию интерфейса инжектить
-    public FilmServiceIml(@Qualifier("jdbcFilmRepository") FilmRepository filmRepository,
-                          @Qualifier("jdbcUserRepository") UserRepository userRepository,
-                          GenreRepository genreRepository, MpaRepository mpaRepository) {
-        this.filmRepository = filmRepository;
-        this.userRepository = userRepository;
-        this.genreRepository = genreRepository;
-        this.mpaRepository = mpaRepository;
-    }
+
 
 
 
@@ -61,26 +63,16 @@ public class FilmServiceIml implements FilmService {
             throw new NotFoundException("Фильм с id " + updatedFilm.getId() + " не найден.");
         }
 
-        // получаем список id всех жанров
-        List<Integer> genreIds = filmToUpdate.getGenres().stream().map(Genre::getId).toList();
-
         // получаем список всех жанров, id которых есть у фильма
-        List<Genre> listOfGenres = genreRepository.getGenresByIds(genreIds);
-        if (genreIds.size() != listOfGenres.size()) {
-            throw new NotFoundException("Жанры не найдены");
-        }
+        LinkedHashSet<Genre> listOfGenres = filmGenreRepository.getAllFilmGenresById(filmToUpdate.getId());
 
-        // проверяемое обновление
-//        if (updatedFilm.getDescription() != null) {
-//            filmToUpdate.setDescription(updatedFilm.getDescription());
-//        }
+
         filmToUpdate.setName(updatedFilm.getName());
         filmToUpdate.setDescription(updatedFilm.getDescription());
         filmToUpdate.setReleaseDate(updatedFilm.getReleaseDate());
         filmToUpdate.setDuration(updatedFilm.getDuration());
-        filmToUpdate.setMpa_id(updatedFilm.getMpa_id());
+        filmToUpdate.setMpaId(updatedFilm.getMpaId());
         filmToUpdate.setGenres(updatedFilm.getGenres());
-
         return filmRepository.updateFilm(filmToUpdate);
     }
 

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.LinkedHashSet;
 
 @Data
 @EqualsAndHashCode(of = "id")
+@JsonIgnoreProperties({"mpaId", "validReleaseDate"})
 public class Film {
 
     // делаем поле приватным, чтобы оно не попало в json-объект
@@ -41,7 +43,8 @@ public class Film {
     LinkedHashSet<Genre> genres;
 
     // возрастной рейтинг фильма
-    Integer mpa_id;
+    private Integer mpaId;
+    Mpa mpa;
 
 
     /**

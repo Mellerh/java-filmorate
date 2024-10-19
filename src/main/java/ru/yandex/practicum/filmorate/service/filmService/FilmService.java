@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.service.filmService;
 
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 
+@Component
 public interface FilmService {
     Collection<Film> getAllFilms();
 

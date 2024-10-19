@@ -44,3 +44,7 @@
 > JOIN genre ON genre_film.genre_id = genre.id <br />
 > GROUP BY film.id;
 
+#Spring Boot
+#Spring Data (JDBC)
+#H2
+#JUnit
