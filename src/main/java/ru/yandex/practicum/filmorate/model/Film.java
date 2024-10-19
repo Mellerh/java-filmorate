@@ -14,7 +14,7 @@ import java.util.LinkedHashSet;
 
 @Data
 @EqualsAndHashCode(of = "id")
-@JsonIgnoreProperties({"mpaId", "validReleaseDate"})
+@JsonIgnoreProperties({"validReleaseDate"})
 public class Film {
 
     // делаем поле приватным, чтобы оно не попало в json-объект
@@ -43,7 +43,7 @@ public class Film {
     LinkedHashSet<Genre> genres;
 
     // возрастной рейтинг фильма
-    private Integer mpaId;
+    Integer mpaId;
     Mpa mpa;
 
 

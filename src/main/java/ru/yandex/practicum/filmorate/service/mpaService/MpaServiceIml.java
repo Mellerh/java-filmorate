@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.mpaRepo.MpaRepository;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +26,6 @@ public class MpaServiceIml implements MpaService {
 
     @Override
     public Collection<Mpa> getAllMpa() {
-        return List.of();
+        return mpaRepository.getAllMpa();
     }
 }

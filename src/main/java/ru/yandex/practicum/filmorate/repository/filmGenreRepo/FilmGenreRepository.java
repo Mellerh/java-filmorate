@@ -10,7 +10,7 @@ public interface FilmGenreRepository {
 
     void addFilmGenre(Long filmId, Long genreId);
 
-    void deleteFilmGenre(Long genreId, Long filmId);
+    void deleteFilmGenre(Long filmId);
 
 
 }

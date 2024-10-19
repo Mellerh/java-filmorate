@@ -22,7 +22,7 @@ public class JdbcFilmGenreRepository implements FilmGenreRepository {
                     "VALUES (:genreId, :filmId)";
 
     private final String DELETE_FILM_GENRE =
-            "DELETE FROM genre_film WHERE genre_id = :genreId AND filmId = :filmId";
+            "DELETE FROM genre_film WHERE filmId = :filmId";
 
     private final String GET_ALL_FILM_GENRES =
             "SELECT genres.name " +
@@ -60,9 +60,8 @@ public class JdbcFilmGenreRepository implements FilmGenreRepository {
     }
 
     @Override
-    public void deleteFilmGenre(Long genreId, Long filmId) {
+    public void deleteFilmGenre(Long filmId) {
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
-        sqlParameterSource.addValue("genreId", genreId);
         sqlParameterSource.addValue("filmId", filmId);
 
         try {

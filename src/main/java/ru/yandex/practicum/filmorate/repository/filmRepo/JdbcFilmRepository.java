@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.filmGenreRepo.FilmGenreRepository;
 import ru.yandex.practicum.filmorate.repository.mpaRepo.MpaRepository;
 
@@ -24,11 +25,15 @@ public class JdbcFilmRepository implements FilmRepository {
 
     private final String FIND_BY_ID =
             "SELECT films.*, " +
-                    "mpa.mpa_id AS MPA_ID, " +
-                    "mpa.name AS MPA_NAME " +
+                    "mpa.mpa_id AS mpa_id, " +
+                    "mpa.name AS mpa_name " +
                     "FROM films " +
                     "LEFT JOIN mpa ON films.film_id = mpa.mpa_id " +
                     "WHERE films.film_id = :film_id";
+
+    final String UPDATE_FILM_BY_ID = "UPDATE films SET name = :name, description = :description, releaseDate = :releaseDate, " +
+            "duration = :duration, " +
+            "WHERE film_id = :film_id";
 
 
     private final NamedParameterJdbcOperations jdbc;
@@ -36,6 +41,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
     private final MpaRepository mpaRepository;
     private final FilmGenreRepository filmGenreRepository;
+
 
 
     @Override
@@ -50,11 +56,14 @@ public class JdbcFilmRepository implements FilmRepository {
 
         // используем try/catch, чтобы корректно обрабатывать случай, если в БД нет записи по id
         try {
+            // получаем все жанры фильма
             LinkedHashSet<Genre> genreList = filmGenreRepository.getAllFilmGenresById(id);
             Film film = jdbc.queryForObject(FIND_BY_ID, sqlParameterSource, new FilmRowMapper());
+
             if (film != null) {
                 film.setGenres(genreList);
             }
+
             return film;
 
         } catch (EmptyResultDataAccessException ignored) {
@@ -66,14 +75,8 @@ public class JdbcFilmRepository implements FilmRepository {
     public Film saveFilm(Film film) {
         // GeneratedKeyHolder для получения сгенерированного ключа из таблицы
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-
-        MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
-        sqlParameterSource.addValue("name", film.getName());
-        sqlParameterSource.addValue("description", film.getDescription());
-        sqlParameterSource.addValue("releaseDate", film.getReleaseDate());
-        sqlParameterSource.addValue("duration", film.getDuration());
-        sqlParameterSource.addValue("mpa_id", film.getMpaId());
-
+        // MapSqlParameterSource для параметризированных SQL-запросов
+        MapSqlParameterSource sqlParameterSource = updateParams(film);
 
         // вставляем данные в таблицу films
         jdbc.update("INSERT INTO films (name, description, releaseDate, duration, mpa_id) " +
@@ -88,12 +91,21 @@ public class JdbcFilmRepository implements FilmRepository {
             film.setId(key.longValue());
         }
 
+        Mpa mpa = mpaRepository.getMpaById(film.getMpaId());
+        film.setMpa(mpa);
+
         return film;
     }
 
     @Override
     public Film updateFilm(Film updatedFilm) {
-        return null;
+        filmGenreRepository.deleteFilmGenre(updatedFilm.getId());
+        MapSqlParameterSource mapSqlParameterSource = updateParams(updatedFilm);
+
+        mapSqlParameterSource.addValue("film_id", updatedFilm.getId());
+        jdbc.update(UPDATE_FILM_BY_ID, mapSqlParameterSource);
+
+        return updatedFilm;
     }
 
     @Override
@@ -110,4 +122,16 @@ public class JdbcFilmRepository implements FilmRepository {
     public Collection<Film> returnTopFilms(Long count) {
         return List.of();
     }
+
+
+    private MapSqlParameterSource updateParams(Film film) {
+        MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
+        sqlParameterSource.addValue("name", film.getName());
+        sqlParameterSource.addValue("description", film.getDescription());
+        sqlParameterSource.addValue("releaseDate", film.getReleaseDate());
+        sqlParameterSource.addValue("duration", film.getDuration());
+        sqlParameterSource.addValue("mpa_id", film.getMpaId());
+        return sqlParameterSource;
+    }
 }
+
