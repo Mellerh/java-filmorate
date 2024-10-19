@@ -26,6 +26,7 @@ public class JbdcGenreRepository implements GenreRepository {
 
         try {
             return jdbc.queryForObject(GET_GENRE_BY_ID, sqlParameterSource, new GenreRowMapper());
+
         } catch (EmptyResultDataAccessException ignored) {
             return null;
         }
