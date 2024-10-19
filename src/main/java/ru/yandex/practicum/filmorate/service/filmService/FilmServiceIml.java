@@ -70,15 +70,16 @@ public class FilmServiceIml implements FilmService {
             throw new NotFoundException("Жанры не найдены");
         }
 
-        filmToUpdate.setName(updatedFilm.getName());
-        filmToUpdate.setReleaseDate(updatedFilm.getReleaseDate());
-
         // проверяемое обновление
 //        if (updatedFilm.getDescription() != null) {
 //            filmToUpdate.setDescription(updatedFilm.getDescription());
 //        }
-        filmToUpdate.setDescription();
+        filmToUpdate.setName(updatedFilm.getName());
+        filmToUpdate.setDescription(updatedFilm.getDescription());
+        filmToUpdate.setReleaseDate(updatedFilm.getReleaseDate());
         filmToUpdate.setDuration(updatedFilm.getDuration());
+        filmToUpdate.setMpa_id(updatedFilm.getMpa_id());
+        filmToUpdate.setGenres(updatedFilm.getGenres());
 
         return filmRepository.updateFilm(filmToUpdate);
     }

@@ -41,7 +41,7 @@ public class Film {
     LinkedHashSet<Genre> genres;
 
     // возрастной рейтинг фильма
-    Mpa mpa;
+    Integer mpa_id;
 
 
     /**

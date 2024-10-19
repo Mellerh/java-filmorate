@@ -39,17 +39,12 @@ public class JdbcFilmRepository implements FilmRepository {
         // GeneratedKeyHolder для получения сгенерированного ключа из таблицы
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
-        // получаем id mpa для сохранение в таблицу film
-        // вариант, если с клиента приходит не id mpa, а название
-//        Integer mpa_id= jdbc.update("SELECT mpa_id FROM mpa WHERE name = :name",
-//                new MapSqlParameterSource("name", film.getMpa()));
-
         MapSqlParameterSource sqlParameterSource = new MapSqlParameterSource();
         sqlParameterSource.addValue("name", film.getName());
         sqlParameterSource.addValue("description", film.getDescription());
         sqlParameterSource.addValue("releaseDate", film.getReleaseDate());
         sqlParameterSource.addValue("duration", film.getDuration());
-        sqlParameterSource.addValue("mpa_id", film.getMpa());
+        sqlParameterSource.addValue("mpa_id", film.getMpa_id());
 
 
         // вставляем данные в таблицу films
@@ -60,7 +55,11 @@ public class JdbcFilmRepository implements FilmRepository {
                 new String[]{"film_id"});
 
 
-        film.setId(keyHolder.getKeyAs(Long.class));
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            film.setId(key.longValue());
+        }
+
         return film;
     }
 
