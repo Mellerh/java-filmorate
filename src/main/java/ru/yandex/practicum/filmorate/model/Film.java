@@ -2,19 +2,20 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 @Data
 @EqualsAndHashCode(of = "id")
 @JsonIgnoreProperties({"validReleaseDate"})
+@NoArgsConstructor
+@AllArgsConstructor
 public class Film {
 
     // делаем поле приватным, чтобы оно не попало в json-объект
@@ -40,12 +41,23 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     Integer duration;
 
-    LinkedHashSet<Genre> genres;
-
+    private Set<Genre> genres = new LinkedHashSet<>();
+    private Set<Long> likes = new HashSet<>();
     // возрастной рейтинг фильма
-    Integer mpaId;
-    Mpa mpa;
+    private Mpa mpa;
 
+
+    public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration,
+                Set<Long> likes, Mpa mpa, Set<Genre> genres) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.likes = likes;
+        this.mpa = mpa;
+        this.genres = genres;
+    }
 
     /**
      * валидация входных данных в контроллерах

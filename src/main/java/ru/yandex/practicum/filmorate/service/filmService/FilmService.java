@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.service.filmService;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 
-@Component
+@Service
 public interface FilmService {
     Collection<Film> getAllFilms();
 
@@ -19,5 +19,5 @@ public interface FilmService {
 
     void deleteFilmLikeByUser(Long id, Long userId);
 
-    Collection<Film> returnTopFilms(Long count);
+    Collection<Film> returnTopFilms(Integer count);
 }

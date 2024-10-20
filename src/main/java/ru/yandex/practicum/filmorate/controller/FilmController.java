@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -14,20 +15,13 @@ import java.util.Collection;
 @Validated
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
 
     // мы создали сервис FilmService, который будет хранить фильмы и правильно их обновлять.
     // это позволяет поддерживать принцип единой ответственности
-    private final FilmService filmService;
-
-    /**
-     * аннотация @Autowired автоматичски внедрит FilmService в контроллер
-     */
     @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
-
+    private final FilmService filmService;
 
 
     @GetMapping
@@ -70,7 +64,7 @@ public class FilmController {
      * ?count={count}
      */
     @GetMapping("/popular")
-    public Collection<Film> returnTopFilms(@RequestParam(required = false) Long count) {
+    public Collection<Film> returnTopFilms(@RequestParam(required = false) Integer count) {
         return filmService.returnTopFilms(count);
     }
 

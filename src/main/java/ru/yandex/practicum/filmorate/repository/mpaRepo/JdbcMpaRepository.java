@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.repository.mpaRepo;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,7 @@ public class JdbcMpaRepository implements MpaRepository {
 
         try {
             return jdbc.queryForObject(GET_MPA_BY_ID, sqlParameterSource, new MpaRowMapper());
-        } catch (EmptyResultDataAccessException ignored) {
+        } catch (Exception e) {
             return null;
         }
 
@@ -33,10 +32,6 @@ public class JdbcMpaRepository implements MpaRepository {
 
     @Override
     public Collection<Mpa> getAllMpa() {
-        try {
-            return jdbc.query(GET_ALL_MPA, new MpaRowMapper());
-        } catch (EmptyResultDataAccessException ignored) {
-            return null;
-        }
+        return jdbc.query(GET_ALL_MPA, new MpaRowMapper());
     }
 }
