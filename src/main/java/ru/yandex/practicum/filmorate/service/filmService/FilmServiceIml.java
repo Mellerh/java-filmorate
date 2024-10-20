@@ -23,6 +23,7 @@ import java.util.Collection;
 public class FilmServiceIml implements FilmService {
 
     @Autowired
+    // с помощью @Qualifier явно указываем Спрингу, какую реализацию интерфейса инжектить
     @Qualifier("jdbcUserRepository")
     private UserRepository userRepository;
 
@@ -34,10 +35,6 @@ public class FilmServiceIml implements FilmService {
     private MpaRepository mpaRepository;
     @Autowired
     private FilmLikesRepository filmLikesRepository;
-
-    // с помощью @Qualifier явно указываем Спрингу, какую реализацию интерфейса инжектить
-
-
 
 
     @Override

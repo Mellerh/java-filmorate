@@ -18,17 +18,19 @@ public class JdbcFilmLikesRepository implements FilmLikesRepository {
     private MpaService mpaService;
     private GenreService genreService;
 
-
+    @Override
     public void addLike(Long filmId, Long userId) {
         String sql = "INSERT INTO film_user_likes (film_id, user_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, filmId, userId);
     }
 
+    @Override
     public void deleteLike(Long filmId, Long userId) {
         String sql = "DELETE FROM film_user_likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, filmId, userId);
     }
 
+    @Override
     public List<Film> getPopular(Integer count) {
         String getPopularQuery = "SELECT films.film_id AS fmId, films.name AS fmName, films.description AS fmDesc, " +
                 "films.releaseDate AS fmDate, films.duration AS fmDur, films.mpa_id AS fmMpaId " +
@@ -47,6 +49,7 @@ public class JdbcFilmLikesRepository implements FilmLikesRepository {
                 count);
     }
 
+    @Override
     public List<Long> getLikes(Long filmId) {
         String sql = "SELECT user_id FROM film_user_likes WHERE film_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("user_id"), filmId);

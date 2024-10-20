@@ -25,7 +25,6 @@ public class JdbcFilmRepository implements FilmRepository {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcOperations jdbc;
 
-
     private final MpaService mpaService;
     private final GenreService genreService;
     private final FilmLikesRepository likesRepository;

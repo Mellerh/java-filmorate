@@ -15,13 +15,11 @@ import java.util.Set;
 @Repository
 public class JdbcFriendshipRepository implements FriendshipRepository {
 
-
     @Qualifier("jdbcUserRepository")
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
 
     @Override
     public List<User> getFriends(Long userId) {

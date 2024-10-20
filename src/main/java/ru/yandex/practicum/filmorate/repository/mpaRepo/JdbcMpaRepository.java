@@ -14,8 +14,8 @@ public class JdbcMpaRepository implements MpaRepository {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    private final String GET_MPA_BY_ID = "SELECT * FROM mpa WHERE mpa_id = :mpa_id";
-    private final String GET_ALL_MPA = "SELECT * FROM mpa";
+    private final String getMpaById = "SELECT * FROM mpa WHERE mpa_id = :mpa_id";
+    private final String getAllMpa = "SELECT * FROM mpa";
 
     @Override
     public Mpa getMpaById(Integer mpaId) {
@@ -23,7 +23,7 @@ public class JdbcMpaRepository implements MpaRepository {
         sqlParameterSource.addValue("mpa_id", mpaId);
 
         try {
-            return jdbc.queryForObject(GET_MPA_BY_ID, sqlParameterSource, new MpaRowMapper());
+            return jdbc.queryForObject(getMpaById, sqlParameterSource, new MpaRowMapper());
         } catch (Exception e) {
             return null;
         }
@@ -32,6 +32,6 @@ public class JdbcMpaRepository implements MpaRepository {
 
     @Override
     public Collection<Mpa> getAllMpa() {
-        return jdbc.query(GET_ALL_MPA, new MpaRowMapper());
+        return jdbc.query(getAllMpa, new MpaRowMapper());
     }
 }
