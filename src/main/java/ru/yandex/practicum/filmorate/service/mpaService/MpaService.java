@@ -10,6 +10,7 @@ public interface MpaService {
 
     Mpa getMpaById(Integer mpaId);
 
+    Mpa getMpaByIdWithCreation(Integer mpaId);
     Collection<Mpa> getAllMpa();
 
 }

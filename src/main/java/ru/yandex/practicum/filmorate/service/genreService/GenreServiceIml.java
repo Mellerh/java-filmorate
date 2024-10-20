@@ -3,14 +3,15 @@ package ru.yandex.practicum.filmorate.service.genreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.exceptions.NotCorrectFieldException;
+import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.genreRepo.JbdcGenreRepository;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +30,20 @@ public class GenreServiceIml implements GenreService {
 
     @Override
     public Genre getGenreById(Integer id) {
-        return genreRepository.getGenreById(id);
+        Genre genre = genreRepository.getGenreById(id);
+        if (genre == null) {
+            throw new NotFoundException("Genre с id " + id + " не найден.");
+        }
+        return genre;
+    }
+
+    @Override
+    public Genre getGenreByIdWithCreation(Integer id) {
+        Genre genre = genreRepository.getGenreById(id);
+        if (genre == null) {
+            throw new NotCorrectFieldException("Genre с id " + id + " не найден.");
+        }
+        return genre;
     }
 
     @Override
@@ -39,7 +53,7 @@ public class GenreServiceIml implements GenreService {
     }
 
     @Override
-    public Set<Genre> getFilmGenres(Long filmId) {
-        return new HashSet<>(genreRepository.getFilmGenres(filmId));
+    public LinkedHashSet<Genre> getFilmGenres(Long filmId) {
+        return new LinkedHashSet<>(genreRepository.getFilmGenres(filmId));
     }
 }

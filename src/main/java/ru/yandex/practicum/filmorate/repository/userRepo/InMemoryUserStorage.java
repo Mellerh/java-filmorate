@@ -41,46 +41,45 @@ public class InMemoryUserStorage implements UserRepository {
     }
 
 
-
-    @Override
-    public List<User> getAllUserFriendsIds(Long id) {
-
-        // возвращаем списко всех друзей пользователя
-        return userFriendsList.get(id)
-                .stream()
-                .map(friendId -> getUserById(friendId))
-                .filter(userFriend -> userFriend != null)
-                .toList();
-    }
-
-    @Override
-    public void addNewFriendById(Long userId, Long friendId) {
-        userFriendsList.get(userId).add(friendId);
-    }
-
-    @Override
-    public void deleteFriendById(Long userId, Long friendId) {
-        // если у пользователя не окажется в списке друзей другой пользователь
-        // remove просто вернёт false, если элемент не был найден
-        // и не выбросит исключение.
-        userFriendsList.get(userId).remove(friendId);
-    }
-
-    /**
-     * возвращаем список друзей, общих с другим пользователем
-     */
-    @Override
-    public List<User> getAllCommonFriends(Long id, Long otherId) {
-
-        Set<Long> otherUserFriends = userFriendsList.get(otherId);
-
-        // получаем список всех id-друзей первого пользователя и сравниваем с id из otherUserFriends
-        return userFriendsList.get(id).stream()
-                .filter(userFrId -> otherUserFriends.contains(userFrId))
-                .map(commonFriendId -> getUserById(commonFriendId))
-                .filter(user -> user != null)
-                .toList();
-    }
+//    @Override
+//    public List<User> getAllUserFriendsIds(Long id) {
+//
+//        // возвращаем списко всех друзей пользователя
+//        return userFriendsList.get(id)
+//                .stream()
+//                .map(friendId -> getUserById(friendId))
+//                .filter(userFriend -> userFriend != null)
+//                .toList();
+//    }
+//
+//    @Override
+//    public void addNewFriendById(Long userId, Long friendId) {
+//        userFriendsList.get(userId).add(friendId);
+//    }
+//
+//    @Override
+//    public void deleteFriendById(Long userId, Long friendId) {
+//        // если у пользователя не окажется в списке друзей другой пользователь
+//        // remove просто вернёт false, если элемент не был найден
+//        // и не выбросит исключение.
+//        userFriendsList.get(userId).remove(friendId);
+//    }
+//
+//    /**
+//     * возвращаем список друзей, общих с другим пользователем
+//     */
+//    @Override
+//    public List<User> getAllCommonFriends(Long id, Long otherId) {
+//
+//        Set<Long> otherUserFriends = userFriendsList.get(otherId);
+//
+//        // получаем список всех id-друзей первого пользователя и сравниваем с id из otherUserFriends
+//        return userFriendsList.get(id).stream()
+//                .filter(userFrId -> otherUserFriends.contains(userFrId))
+//                .map(commonFriendId -> getUserById(commonFriendId))
+//                .filter(user -> user != null)
+//                .toList();
+//    }
 
 
     /**

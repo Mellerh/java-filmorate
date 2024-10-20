@@ -30,19 +30,20 @@ public class JdbcFilmLikesRepository implements FilmLikesRepository {
     }
 
     public List<Film> getPopular(Integer count) {
-        String getPopularQuery = "SELECT film_id, name, description, releaseDate, duration, mpa_id " +
+        String getPopularQuery = "SELECT films.film_id AS fmId, films.name AS fmName, films.description AS fmDesc, " +
+                "films.releaseDate AS fmDate, films.duration AS fmDur, films.mpa_id AS fmMpaId " +
                 "FROM films LEFT JOIN film_user_likes ON films.film_id = film_user_likes.film_id " +
                 "GROUP BY films.film_id ORDER BY COUNT(film_user_likes.user_id) DESC LIMIT ?";
 
         return jdbcTemplate.query(getPopularQuery, (rs, rowNum) -> new Film(
-                        rs.getLong("film_id"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        rs.getDate("releaseDate").toLocalDate(),
-                        rs.getInt("duration"),
-                        new HashSet<>(getLikes(rs.getLong("film_id"))),
-                        mpaService.getMpaById(rs.getInt("mpa_id")),
-                        genreService.getFilmGenres(rs.getLong("film_id"))),
+                        rs.getLong("fmId"),
+                        rs.getString("fmName"),
+                        rs.getString("fmDesc"),
+                        rs.getDate("fmDate").toLocalDate(),
+                        rs.getInt("fmDur"),
+                        new HashSet<>(getLikes(rs.getLong("fmId"))),
+                        mpaService.getMpaById(rs.getInt("fmMpaId")),
+                        genreService.getFilmGenres(rs.getLong("fmId"))),
                 count);
     }
 

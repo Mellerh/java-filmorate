@@ -1,12 +1,9 @@
 package ru.yandex.practicum.filmorate.repository.genreRepo;
 
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -19,7 +16,6 @@ public class JbdcGenreRepository implements GenreRepository {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
-
     public List<Genre> getGenres() {
         String sql = "SELECT * FROM genres";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Genre(
@@ -29,21 +25,13 @@ public class JbdcGenreRepository implements GenreRepository {
     }
 
     public Genre getGenreById(Integer genreId) {
-        if (genreId == null) {
-            throw new ValidationException("Передан пустой аргумент!");
-        }
 
-        Genre genre;
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet("SELECT * FROM genres WHERE genre_id = ?", genreId);
-        if (genreRows.first()) {
-            genre = new Genre(
-                    genreRows.getInt("id"),
-                    genreRows.getString("name")
-            );
-        } else {
-            throw new NotFoundException("Жанр с ID=" + genreId + " не найден!");
+        try {
+            return jdbcTemplate.queryForObject("SELECT genre_id, name FROM genres WHERE genre_id = ?", (rs, rowNum) -> new Genre(
+                    rs.getInt("genre_id"), rs.getString("name")), genreId);
+        } catch (Exception e) {
+            return null;
         }
-        return genre;
     }
 
     public void delete(Film film) {
@@ -60,10 +48,11 @@ public class JbdcGenreRepository implements GenreRepository {
     }
 
     public List<Genre> getFilmGenres(Long filmId) {
-        String sql = "SELECT genre_id, name FROM genre_film" +
-                " INNER JOIN genres ON genre_id = genre_id WHERE film_id = ?";
+        String sql = "SELECT genres.genre_id AS gnrId, genres.name AS gnrName " +
+                "FROM genre_film " +
+                "INNER JOIN genres ON genre_film.genre_id = genres.genre_id WHERE genre_film.film_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Genre(
-                rs.getInt("genre_id"), rs.getString("name")), filmId
+                rs.getInt("gnrId"), rs.getString("gnrName")), filmId
         );
     }
 }

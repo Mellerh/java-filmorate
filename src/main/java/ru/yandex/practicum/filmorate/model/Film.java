@@ -6,16 +6,13 @@ import lombok.*;
 import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Data
 @EqualsAndHashCode(of = "id")
 @JsonIgnoreProperties({"validReleaseDate"})
 @NoArgsConstructor
-@AllArgsConstructor
 public class Film {
 
     // делаем поле приватным, чтобы оно не попало в json-объект
@@ -41,14 +38,15 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     Integer duration;
 
-    private Set<Genre> genres = new LinkedHashSet<>();
     private Set<Long> likes = new HashSet<>();
-    // возрастной рейтинг фильма
-    private Mpa mpa;
 
+    // возрастной рейтинг фильма
+    @NotNull
+    private Mpa mpa;
+    private LinkedHashSet<Genre> genres;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration,
-                Set<Long> likes, Mpa mpa, Set<Genre> genres) {
+                Set<Long> likes, Mpa mpa, LinkedHashSet<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -65,6 +63,16 @@ public class Film {
     @AssertTrue(message = "Дата релиза фильма должна быть после 18.12.1895")
     public boolean isValidReleaseDate() {
         return releaseDate.isAfter(filmMinReleaseDate);
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("releaseDate", releaseDate);
+        values.put("duration", duration);
+        values.put("mpa_id", mpa.getId());
+        return values;
     }
 
 }

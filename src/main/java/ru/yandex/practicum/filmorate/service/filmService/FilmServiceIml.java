@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service.filmService;
 
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +32,7 @@ public class FilmServiceIml implements FilmService {
 
     @Autowired
     private MpaRepository mpaRepository;
+    @Autowired
     private FilmLikesRepository filmLikesRepository;
 
     // с помощью @Qualifier явно указываем Спрингу, какую реализацию интерфейса инжектить
@@ -54,12 +54,7 @@ public class FilmServiceIml implements FilmService {
     @Override
     public Film updateFilm(Film updatedFilm) {
         // если фильма с переданным id нет в списке, выбрасываем исключение
-        Film filmToUpdate = filmRepository.getFilmById(updatedFilm.getId());
-        if (filmToUpdate == null) {
-            throw new NotFoundException("Фильм с id " + updatedFilm.getId() + " не найден.");
-        }
-
-        return filmRepository.updateFilm(filmToUpdate);
+        return filmRepository.updateFilm(updatedFilm);
     }
 
 
@@ -105,9 +100,6 @@ public class FilmServiceIml implements FilmService {
 
     @Override
     public Collection<Film> returnTopFilms(Integer count) {
-        if (count < 1) {
-            throw new ValidationException("Количество фильмов для вывода не должно быть меньше 1");
-        }
         return filmLikesRepository.getPopular(count);
     }
 

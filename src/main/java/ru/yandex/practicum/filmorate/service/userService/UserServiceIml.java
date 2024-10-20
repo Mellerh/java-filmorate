@@ -1,14 +1,16 @@
 package ru.yandex.practicum.filmorate.service.userService;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.friendshipRepo.FriendshipRepository;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
  * сервис для реализации логики по добавлению/апДейту User
@@ -21,7 +23,8 @@ public class UserServiceIml implements UserService {
     @Autowired
     @Qualifier("jdbcUserRepository")
     private UserRepository userRepository;
-
+    @Autowired
+    private FriendshipRepository friendshipRepository;
 
 
     @Override
@@ -36,36 +39,20 @@ public class UserServiceIml implements UserService {
 
     @Override
     public User updateUser(User updatedUser) {
-//        log.info("Update User: {} - Started", updatedUser);
-
         User userToUpdate = userRepository.getUserById(updatedUser.getId());
         if (userToUpdate == null) {
             throw new NotFoundException("Пользователь с " + updatedUser.getId() + " не найден.");
-        }
-
-        userToUpdate.setLogin(updatedUser.getLogin());
-        userToUpdate.setEmail(updatedUser.getEmail());
-
-//        логика, дополняющая isNameValid() в User, для обновления полей пользователя
-        if (updatedUser.getName() != null) {
-            userToUpdate.setName(updatedUser.getName());
-        } else {
-            userToUpdate.setName(updatedUser.getLogin());
-        }
-
-        if (userToUpdate.getBirthday() != null) {
-            userToUpdate.setBirthday(updatedUser.getBirthday());
         }
 
         return userRepository.updateUser(updatedUser);
     }
 
     @Override
-    public User getUserById(Long id) {
+    public User getUserById(Long userId) {
 
-        User user = userRepository.getUserById(id);
+        User user = userRepository.getUserById(userId);
         if (user == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+            throw new NotFoundException("Пользователь с id " + userId + " не найден.");
         }
 
         return user;
@@ -77,63 +64,43 @@ public class UserServiceIml implements UserService {
      * SRP - принцип единой ответственности
      */
     @Override
-    public Collection<User> getAllUserFriends(Long id) {
-        User user = userRepository.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
+    public void addFriend(Long userId, Long friendId) {
+        if (userId == friendId) {
+            throw new ValidationException("Нельзя добавить самого себя в друзья!");
         }
-
-        return userRepository.getAllUserFriendsIds(id);
+        friendshipRepository.addNewFriend(userId, friendId);
     }
 
     @Override
-    public void addNewFriendById(Long id, Long friendId) {
-        // провреяем, существуют ли пользователи в репозитории
-        validateUserAndFriend(id, friendId);
-
-        // добавляем друга пользователю и наоборот
-        userRepository.addNewFriendById(id, friendId);
-        userRepository.addNewFriendById(friendId, id);
-
+    public void deleteFriend(Long userId, Long friendId) {
+        if (userId == friendId) {
+            throw new ValidationException("Нельзя удалить самого себя из друзей!");
+        }
+        friendshipRepository.deleteFriend(userId, friendId);
     }
 
     @Override
-    public void deleteFriendById(Long id, Long friendId) {
-        validateUserAndFriend(id, friendId);
-
-
-        // если у пользователя не окажется в списке друзей другой пользователь
-        // remove просто вернёт false, если элемент не был найден
-        // и не выбросит исключение.
-        userRepository.deleteFriendById(id, friendId);
-        userRepository.deleteFriendById(friendId, id);
+    public List<User> getFriends(Long userId) {
+        List<User> friends = new ArrayList<>();
+        if (userId != null) {
+            friends = friendshipRepository.getFriends(userId);
+        }
+        return friends;
     }
 
-    /**
-     * возвращаем список друзей, общих с другим пользователем
-     */
     @Override
-    public Collection<User> getAllCommonFriends(Long id, Long otherId) {
+    public List<User> getCommonFriends(Long firstUserId, Long secondUserId) {
 
-        validateUserAndFriend(id, otherId);
+        User firstUser = userRepository.getUserById(firstUserId);
+        User secondUser = userRepository.getUserById(secondUserId);
+        Set<User> intersection = null;
 
-        return userRepository.getAllCommonFriends(id, otherId);
+        if ((firstUser != null) && (secondUser != null)) {
+            intersection = new HashSet<>(friendshipRepository.getFriends(firstUserId));
+            intersection.retainAll(friendshipRepository.getFriends(secondUserId));
+        }
+        return new ArrayList<User>(intersection);
     }
 
-
-    /**
-     * метод провряет, существуют ли пользователи в репозитории
-     */
-    private void validateUserAndFriend(Long id, Long friendId) {
-        User user = userRepository.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
-        }
-
-        User userFriend = userRepository.getUserById(friendId);
-        if (userFriend == null) {
-            throw new NotFoundException("Пользователь с id " + id + " не найден.");
-        }
-    }
 
 }

@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 @Service
 public interface GenreService {
@@ -14,6 +14,8 @@ public interface GenreService {
 
     void putGenres(Film film);
 
-    Set<Genre> getFilmGenres(Long filmId);
+    Genre getGenreByIdWithCreation(Integer id);
+
+    LinkedHashSet<Genre> getFilmGenres(Long filmId);
     Collection<Genre> getAllGenres();
 }

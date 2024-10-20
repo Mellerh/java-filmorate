@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-  user_id INT PRIMARY KEY,
+  user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   email varchar,
   login varchar,
   name varchar,
@@ -8,8 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS friendship (
   user_id INT,
-  friend_id INT,
-  status varchar
+  friend_id INT
 );
 
 CREATE TABLE IF NOT EXISTS film_user_likes (
@@ -18,7 +17,7 @@ CREATE TABLE IF NOT EXISTS film_user_likes (
 );
 
 CREATE TABLE IF NOT EXISTS films (
-  film_id INT PRIMARY KEY,
+  film_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name varchar,
   description varchar,
   releaseDate timestamp,
@@ -27,7 +26,7 @@ CREATE TABLE IF NOT EXISTS films (
 );
 
 CREATE TABLE IF NOT EXISTS genres (
-  genre_id INT PRIMARY KEY,
+  genre_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name varchar
 );
 
@@ -37,9 +36,10 @@ CREATE TABLE IF NOT EXISTS genre_film (
 );
 
 CREATE TABLE IF NOT EXISTS mpa (
-  mpa_id INT PRIMARY KEY,
+  mpa_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name varchar
 );
+
 
 ALTER TABLE friendship ADD FOREIGN KEY (user_id) REFERENCES users (user_id);
 
