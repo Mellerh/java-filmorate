@@ -51,6 +51,10 @@ public class User {
         }
     }
 
+    public User() {
+
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> values = new HashMap<>();
         values.put("email", email);

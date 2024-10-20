@@ -104,19 +104,4 @@ public class FilmServiceIml implements FilmService {
     }
 
 
-    /**
-     * метод провряет, существуют ли филь и пользователя в репозитории
-     */
-//    private void validateUserAndFriend(Long filmId, Long userId) {
-//        Film film = filmRepository.getFilmById(filmId);
-//        if (film == null) {
-//            throw new NotFoundException("Фильм с id " + filmId + " не найден.");
-//        }
-//
-//        User user = userRepository.getUserById(userId);
-//        if (user == null) {
-//            throw new NotFoundException("Пользователь с id " + filmId + " не найден.");
-//        }
-//    }
-
 }
