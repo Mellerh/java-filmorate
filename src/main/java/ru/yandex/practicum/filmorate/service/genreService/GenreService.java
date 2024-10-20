@@ -17,5 +17,6 @@ public interface GenreService {
     Genre getGenreByIdWithCreation(Integer id);
 
     LinkedHashSet<Genre> getFilmGenres(Long filmId);
+    
     Collection<Genre> getAllGenres();
 }
