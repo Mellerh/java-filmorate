@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 
 @Service
 public interface GenreService {
-
     Genre getGenreById(Integer id);
 
     void putGenres(Film film);
@@ -17,6 +16,6 @@ public interface GenreService {
     Genre getGenreByIdWithCreation(Integer id);
 
     LinkedHashSet<Genre> getFilmGenres(Long filmId);
-    
+
     Collection<Genre> getAllGenres();
 }
