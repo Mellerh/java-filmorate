@@ -2,10 +2,17 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import ru.yandex.practicum.filmorate.model.helpres.Update;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Data
+@EqualsAndHashCode(of = "id")
 public class User {
 
     @NotNull(groups = {Update.class})
@@ -27,6 +34,36 @@ public class User {
     @Past(message = "Дата рождения не может быть в будущем")
     LocalDate birthday;
 
+    private Set<Long> friends;
+
+    public User(Long id, String email, String login, String name, LocalDate birthday, Set<Long> friends) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
+            this.name = login;
+        }
+        this.birthday = birthday;
+        this.friends = friends;
+        if (friends == null) {
+            this.friends = new HashSet<>();
+        }
+    }
+
+    public User() {
+
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("email", email);
+        values.put("login", login);
+        values.put("name", name);
+        values.put("birthday", birthday);
+        return values;
+    }
+
     /**
      * аннотация метода валидации позволяет создать кастомную проверку
      */
@@ -41,9 +78,3 @@ public class User {
 
 }
 
-
-//{
-//        "email": "vas@yande.ru",
-//        "login": "taras",
-//        "birthday": "1997-06-10"
-//        }

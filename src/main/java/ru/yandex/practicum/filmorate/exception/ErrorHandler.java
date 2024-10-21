@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.exceptions.DuplicatedDataException;
+import ru.yandex.practicum.filmorate.exception.exceptions.NotCorrectFieldException;
 import ru.yandex.practicum.filmorate.exception.exceptions.NotFoundException;
 
 
@@ -27,6 +27,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotFoundException(final NotCorrectFieldException e) {
+        log.info("NotCorrectFieldException: {}", e.getMessage());
+        return new ErrorResponse("error", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicatedDataException(final DuplicatedDataException e) {
         log.info("DuplicatedDataException: {}", e.getMessage());
@@ -39,6 +46,7 @@ public class ErrorHandler {
         log.info("ValidationException: {}", e.getMessage());
         return new ErrorResponse("error", e.getMessage());
     }
+
 
     /**
      * непредвиденная ошибка на стороне сервера

@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Update;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.helpres.Update;
 import ru.yandex.practicum.filmorate.service.userService.UserService;
 
 import java.util.Collection;
@@ -60,17 +60,17 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public Collection<User> getAllUserFriends(@PathVariable Long id) {
-        return userService.getAllUserFriends(id);
+        return userService.getFriends(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addNewFriendById(@PathVariable Long id, @PathVariable Long friendId) {
-        userService.addNewFriendById(id, friendId);
+        userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriendById(@PathVariable Long id, @PathVariable Long friendId) {
-        userService.deleteFriendById(id, friendId);
+        userService.deleteFriend(id, friendId);
     }
 
     /**
@@ -78,6 +78,6 @@ public class UserController {
      */
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> getAllCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
-        return userService.getAllCommonFriends(id, otherId);
+        return userService.getCommonFriends(id, otherId);
     }
 }
