@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Component
@@ -45,12 +45,20 @@ public class JbdcGenreRepository implements GenreRepository {
     }
 
     @Override
-    public List<Genre> getAllGenresByIds(Set<Integer> genreIds) {
+    public List<Genre> getAllGenresByIds(LinkedHashSet<Integer> genreIds) {
         String sql = "SELECT * FROM genres WHERE genre_id IN (:ids)";
-        return namedParameterJdbcTemplate.query(sql, Map.of("ids", genreIds), (rs, rowNum) -> new Genre(
-                rs.getInt("genre_id"),
-                rs.getString("name"))
-        );
+
+        try {
+            return namedParameterJdbcTemplate.query(sql, Map.of("ids", genreIds), (rs, rowNum) -> new Genre(
+                    rs.getInt("genre_id"),
+                    rs.getString("name")));
+
+
+        } catch (Exception e) {
+            log.warn("Проблема запроса getGenreById c " + genreIds);
+            return null;
+        }
+
     }
 
     @Override
@@ -66,6 +74,11 @@ public class JbdcGenreRepository implements GenreRepository {
                         film.getId(), genre.getId());
             }
         }
+    }
+
+    public Integer getMaxGenreId() {
+        String sql = "SELECT MAX(genre_id) FROM genres";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
     @Override

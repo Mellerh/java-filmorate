@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.repository.genreRepo.JbdcGenreRepository;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +44,16 @@ public class GenreServiceIml implements GenreService {
     }
 
     @Override
-    public List<Genre> getAllGenresByIds(Set<Integer> genreIds) {
+    public List<Genre> getAllGenresByIds(LinkedHashSet<Integer> genreIds) {
+        Integer maxGenreId = genreRepository.getMaxGenreId();
+        boolean hasInvalidIds = genreIds.stream()
+                .anyMatch(id -> id > maxGenreId);
+
+        if (hasInvalidIds) {
+            throw new NotCorrectFieldException("Переданы неверные genreId " + genreIds);
+        }
+
+
         return genreRepository.getAllGenresByIds(genreIds);
     }
 

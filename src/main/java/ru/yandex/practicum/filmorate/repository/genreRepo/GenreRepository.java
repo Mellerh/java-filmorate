@@ -4,14 +4,14 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface GenreRepository {
     List<Genre> getGenres();
 
-    List<Genre> getAllGenresByIds(Set<Integer> genreIds);
+    List<Genre> getAllGenresByIds(LinkedHashSet<Integer> genreIds);
 
     Genre getGenreById(Integer id);
 

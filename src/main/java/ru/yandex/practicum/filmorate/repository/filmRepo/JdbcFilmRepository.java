@@ -13,8 +13,10 @@ import ru.yandex.practicum.filmorate.repository.filmLikesRepository.FilmLikesRep
 import ru.yandex.practicum.filmorate.service.genreService.GenreService;
 import ru.yandex.practicum.filmorate.service.mpaService.MpaService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 // используем аннотацию @Qualifier, чтобы указывать её в @FilmServiceIml для указания Spring, какую реалзиацию инжектить
 @Component
@@ -78,12 +80,19 @@ public class JdbcFilmRepository implements FilmRepository {
         film.setMpa(mpaService.getMpaByIdWithCreation(film.getMpa().getId()));
         film.setId(simpleJdbcInsert.executeAndReturnKey(film.toMap()).longValue());
 
+
         if (film.getGenres() != null) {
-            for (Genre genre : film.getGenres()) {
-                genre.setName(genreService.getGenreByIdWithCreation(genre.getId()).getName());
-            }
+            LinkedHashSet<Integer> listOfGenresIds = new LinkedHashSet<>(film.getGenres().stream()
+                    .map(genre -> genre.getId())
+                    .toList());
+
+
+            List<Genre> genreList = genreService.getAllGenresByIds(listOfGenresIds);
+
+            film.setGenres(new LinkedHashSet<>(genreList));
             genreService.putGenres(film);
         }
+
         return film;
     }
 
@@ -100,17 +109,22 @@ public class JdbcFilmRepository implements FilmRepository {
                 film.getMpa().getId(),
                 film.getId()) != 0) {
             film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
+
             if (film.getGenres() != null) {
-                Collection<Genre> sortGenres = film.getGenres().stream()
-                        .sorted(Comparator.comparing(Genre::getId))
-                        .collect(Collectors.toList());
-                film.setGenres(new LinkedHashSet<>(sortGenres));
-                for (Genre genre : film.getGenres()) {
-                    genre.setName(genreService.getGenreById(genre.getId()).getName());
-                }
+                LinkedHashSet<Integer> listOfGenresIds = new LinkedHashSet<>(film.getGenres().stream()
+                        .map(genre -> genre.getId())
+                        .toList());
+
+
+                List<Genre> genreList = genreService.getAllGenresByIds(listOfGenresIds);
+
+                film.setGenres(new LinkedHashSet<>(genreList));
+                genreService.putGenres(film);
             }
-            genreService.putGenres(film);
+
             return film;
+
+
         } else {
             throw new NotFoundException("Фильм с ID=" + film.getId() + " не найден!");
         }
