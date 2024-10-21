@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.userRepo.UserRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public class JdbcFriendshipRepository implements FriendshipRepository {
@@ -43,18 +40,24 @@ public class JdbcFriendshipRepository implements FriendshipRepository {
 
     @Override
     public void addNewFriend(Long userId, Long friendId) {
-        User user = userRepository.getUserById(userId);
-        User friend = userRepository.getUserById(friendId);
-        if ((user != null) && (friend != null)) {
-            if (friend.getFriends().contains(userId)) {
-                String sql = "UPDATE friendship SET user_id = ? AND friend_id = ? " +
-                        "WHERE user_id = ? AND friend_id = ?";
-                jdbcTemplate.update(sql, friendId, userId, friendId, userId);
-            }
-            String sql = "INSERT INTO friendship (user_id, friend_id) VALUES (?, ?)";
-            jdbcTemplate.update(sql, userId, friendId);
+
+        if (friendshipExists(userId, friendId)) {
+            String sql = "UPDATE friendship SET user_id = ? AND friend_id = ? " +
+                    "WHERE user_id = ? AND friend_id = ?";
+            jdbcTemplate.update(sql, friendId, userId, friendId, userId);
         }
+
+        String sql = "INSERT INTO friendship (user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, userId, friendId);
+
     }
+
+    public boolean friendshipExists(Long userId, Long friendId) {
+        String sql = "SELECT COUNT(*) FROM friendship WHERE user_id = ? AND friend_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, friendId);
+        return count != null && count > 0;
+    }
+
 
     @Override
     public void deleteFriend(Long userId, Long friendId) {
@@ -63,26 +66,22 @@ public class JdbcFriendshipRepository implements FriendshipRepository {
         if ((user != null) && (friend != null)) {
             String sql = "DELETE FROM friendship WHERE user_id = ? AND friend_id = ?";
             jdbcTemplate.update(sql, userId, friendId);
-
-            if (friend.getFriends().contains(userId)) {
-                // дружба стала невзаимной - нужно поменять статус
-                sql = "UPDATE friendship SET user_id = ? AND friend_id = ? " +
-                        "WHERE user_id = ? AND friend_id = ?";
-                jdbcTemplate.update(sql, friendId, userId, false, friendId, userId);
-            }
         }
     }
 
     @Override
     public List<User> getCommonFriends(Long id, Long otherId) {
-        User firstUser = userRepository.getUserById(id);
-        User secondUser = userRepository.getUserById(otherId);
-        Set<User> intersection = null;
+        String sql = "SELECT users.* FROM users " +
+                "JOIN friendship AS friendship1 ON users.user_id = friendship1.friend_id AND friendship1.user_id = ? " +
+                "JOIN friendship AS friendship2 ON users.user_id = friendship2.friend_id AND friendship2.user_id = ?";
 
-        if ((firstUser != null) && (secondUser != null)) {
-            intersection = new HashSet<>(getFriends(id));
-            intersection.retainAll(getFriends(otherId));
-        }
-        return new ArrayList<User>(intersection);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new User(
+                        rs.getLong("friend_id"),
+                        rs.getString("email"),
+                        rs.getString("login"),
+                        rs.getString("name"),
+                        rs.getDate("birthday").toLocalDate(),
+                        null),
+                id, otherId);
     }
 }

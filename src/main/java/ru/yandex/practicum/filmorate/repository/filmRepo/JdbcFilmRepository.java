@@ -41,7 +41,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 rs.getInt("duration"),
                 new HashSet<>(likesRepository.getLikes(rs.getLong("film_id"))),
                 mpaService.getMpaById(rs.getInt("mpa_id")),
-                genreService.getFilmGenres(rs.getLong("film_id")))
+                new LinkedHashSet<>(genreService.getFilmGenres(rs.getLong("film_id"))))
         );
     }
 
@@ -58,7 +58,8 @@ public class JdbcFilmRepository implements FilmRepository {
                 rs.getInt("duration"),
                 new HashSet<>(likesRepository.getLikes(rs.getLong("film_id"))),
                 mpaService.getMpaById(rs.getInt("mpa_id")),
-                genreService.getFilmGenres(rs.getLong("film_id"))), filmId);
+                        new LinkedHashSet<>(genreService.getFilmGenres(rs.getLong("film_id")))),
+                filmId);
 
         if (film != null) {
             if (film.getGenres().isEmpty()) {
@@ -141,7 +142,7 @@ public class JdbcFilmRepository implements FilmRepository {
                         rs.getInt("duration"),
                         new HashSet<>(getLikes(rs.getLong("film_id"))),
                         mpaService.getMpaById(rs.getInt("mpa_id")),
-                        genreService.getFilmGenres(rs.getLong("film_id"))),
+                        new LinkedHashSet<>(genreService.getFilmGenres(rs.getLong("film_id")))),
                 count);
     }
 

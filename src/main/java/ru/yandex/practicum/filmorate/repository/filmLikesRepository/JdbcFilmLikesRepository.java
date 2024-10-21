@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.service.genreService.GenreService;
 import ru.yandex.practicum.filmorate.service.mpaService.MpaService;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Repository
@@ -45,7 +46,7 @@ public class JdbcFilmLikesRepository implements FilmLikesRepository {
                         rs.getInt("fmDur"),
                         new HashSet<>(getLikes(rs.getLong("fmId"))),
                         mpaService.getMpaById(rs.getInt("fmMpaId")),
-                        genreService.getFilmGenres(rs.getLong("fmId"))),
+                        new LinkedHashSet<>(genreService.getFilmGenres(rs.getLong("fmId")))),
                 count);
     }
 

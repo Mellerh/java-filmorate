@@ -68,6 +68,13 @@ public class UserServiceIml implements UserService {
         if (userId == friendId) {
             throw new ValidationException("Нельзя добавить самого себя в друзья!");
         }
+
+        User user = userRepository.getUserById(userId);
+        User friend = userRepository.getUserById(friendId);
+        if (user == null || friend == null) {
+            throw new NotFoundException("Не удалось добавить пользователя с " + userId + " и пользователя " + friendId);
+        }
+
         friendshipRepository.addNewFriend(userId, friendId);
     }
 

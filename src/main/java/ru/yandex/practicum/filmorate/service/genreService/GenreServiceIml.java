@@ -10,9 +10,9 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.genreRepo.JbdcGenreRepository;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +23,7 @@ public class GenreServiceIml implements GenreService {
 
     @Override
     public Collection<Genre> getAllGenres() {
-        return genreRepository.getGenres().stream()
-                .sorted(Comparator.comparing(Genre::getId))
-                .collect(Collectors.toList());
+        return genreRepository.getGenres();
     }
 
     @Override
@@ -45,6 +43,12 @@ public class GenreServiceIml implements GenreService {
         }
         return genre;
     }
+
+    @Override
+    public List<Genre> getAllGenresByIds(Set<Integer> genreIds) {
+        return genreRepository.getAllGenresByIds(genreIds);
+    }
+
 
     @Override
     public void putGenres(Film film) {
